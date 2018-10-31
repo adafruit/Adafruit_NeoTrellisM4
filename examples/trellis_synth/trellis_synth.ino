@@ -3,13 +3,9 @@
 
 #include <Adafruit_Keypad.h>
 #include <Adafruit_NeoPixel.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_TSL2561_U.h>
 
 #define NEO_PIN 10
 #define NUM_KEYS 32
-
-Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
 
 AudioSynthWaveform sine0, sine1, sine2, sine3;
 AudioSynthWaveform *waves[4] = {
@@ -88,17 +84,6 @@ void setup(){
 
   customKeypad.tick();
 
-  if (tsl.begin()) {
-    strip.setBrightness(50);
-    while (1) {
-    colorWipe(strip.Color(25, 0, 0), 0); // Red
-    delay(200);
-    colorWipe(strip.Color(0, 25, 0), 0); // Green
-    delay(200);
-    colorWipe(strip.Color(0, 0, 25), 0); // Blue
-    delay(200);
-    }
-  }
   strip.setBrightness(255);
   
   AudioMemory(120);
