@@ -161,7 +161,7 @@ void Controls::stateNormal()
 		case(KEY_LPF):
 			if(filterActive != FILTER_LPF){
 				if(filterActive == FILTER_HPF)
-					_overlay[KEY_HPF-1] = 0;
+					_overlay[KEY_HPF-1] = OVERLAY_FX_OFF;
 
 				_overlay[keyindex] = OVERLAY_FX_ON;
 				myFilterL.begin(fir_list[FILTER_LPF].coeffs, fir_list[FILTER_LPF].num_coeffs);

@@ -14,14 +14,14 @@
 #define NUM_RECORDINGS 8
 
 // WAV files converted to code by wav2sketch
-#include "samples/AudioSampleBd01.h"
-#include "samples/AudioSampleBd05.h"
-#include "samples/AudioSampleCp02.h"
-#include "samples/AudioSampleCr01.h"
-#include "samples/AudioSampleHh01.h"
-#include "samples/AudioSampleOh03.h"
-#include "samples/AudioSampleRs01.h"
-#include "samples/AudioSampleSd01.h"
+#include "AudioSampleBd01.h"
+#include "AudioSampleBd05.h"
+#include "AudioSampleCp02.h"
+#include "AudioSampleCr01.h"
+#include "AudioSampleHh01.h"
+#include "AudioSampleOh03.h"
+#include "AudioSampleRs01.h"
+#include "AudioSampleSd01.h"
 #include "AudioStream.h"
 
 #define SOLO_NONE 0
