@@ -36,7 +36,7 @@ void setup(){
   customKeypad.begin();
 
   Serial.begin(9600);
-  while (!Serial);
+  //while (!Serial);
   Serial.println("MIDI keypad & pitchbend!");
   
   if(!accel.begin()) {
