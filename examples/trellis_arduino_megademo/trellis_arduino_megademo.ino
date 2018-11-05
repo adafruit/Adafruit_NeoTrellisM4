@@ -45,7 +45,6 @@ struct fir_filter fir_list[] = {
 int filterActive = -1;
 
 void setup() {
-
   sampler.begin();
   controls.begin();
   sequencer.begin();
@@ -69,5 +68,3 @@ void loop() {
   controls.run();
   delay(10);
 }
-
-

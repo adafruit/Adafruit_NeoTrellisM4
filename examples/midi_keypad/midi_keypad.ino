@@ -1,13 +1,18 @@
 #include <Adafruit_Keypad.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_ADXL343.h>
 
 #include "MIDIUSB.h"
-#define MIDI_CHANNEL  0  // default channel # is 0
+#define MIDI_CHANNEL     0  // default channel # is 0
 #define FIRST_MIDI_NOTE 24
 
 #define NEO_PIN 10
 #define NUM_KEYS 32
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_KEYS, NEO_PIN, NEO_GRB + NEO_KHZ800);
+
+Adafruit_ADXL343 accel = Adafruit_ADXL343(123);
+int last_ybend = 0;
 
 const byte ROWS = 4; // four rows
 const byte COLS = 8; // eight columns
@@ -29,17 +34,23 @@ void setup(){
   strip.show(); // Initialize all pixels to 'off'
   strip.setBrightness(80);
   customKeypad.begin();
-  
-  Serial.begin(9600);
-  Serial.println("MIDI test!");
 
+  Serial.begin(9600);
+  //while (!Serial);
+  Serial.println("MIDI keypad & pitchbend!");
+  
+  if(!accel.begin()) {
+    Serial.println("No accelerometer found");
+    while(1);
+  }
 }
   
 void loop() {
   // put your main code here, to run repeatedly:
   customKeypad.tick();
 
-  boolean changed = false; // did any keys get pressed?
+  // did any keys get pressed?
+  boolean changed = false;
   while (customKeypad.available()){
     keypadEvent e = customKeypad.read();
     int key_name = (int)e.bit.KEY;
@@ -59,6 +70,31 @@ void loop() {
     }
   }
 
+  // Check for accelerometer
+  sensors_event_t event; 
+  accel.getEvent(&event);
+  /* Display the results (acceleration is measured in m/s^2) */
+  //Serial.print("X: "); Serial.print(event.acceleration.x); Serial.print("  ");
+  //Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
+  //Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
+  int ybend = 0;
+  if (abs(event.acceleration.y) < 2.0) {  // 2.0 m/s^2
+    // don't make any bend unless they've really started moving it
+    ybend = 0;
+  } else {
+    if (event.acceleration.y > 0) {
+      ybend = ofMap(event.acceleration.y, 2.0, 10.0, 8192, 16383, true);  // 2 ~ 10 m/s^2 is upward bend 
+    } else {
+      ybend = ofMap(event.acceleration.y, -2.0, -10.0, -8192, -16383, true);  // -2 ~ -10 m/s^2 is downward bend 
+    }
+  }
+  if (ybend != last_ybend) {
+    Serial.print("Y pitchbend: "); Serial.println(ybend);
+    pitchBend(MIDI_CHANNEL, ybend);
+    last_ybend = ybend;
+    changed = true;
+  }
+  
   if (changed) {
     strip.show();  // update LEDs
     MidiUSB.flush(); // and send all MIDI messages
@@ -83,6 +119,29 @@ void noteOff(byte channel, byte pitch, byte velocity) {
   MidiUSB.sendMIDI(noteOff);
 }
 
+void pitchBend(byte channel, int value) {
+  byte lowValue = value & 0x7F;
+  byte highValue = value >> 7;
+  midiEventPacket_t pitchBend = {0x0E, 0xE0 | channel, lowValue, highValue};
+  MidiUSB.sendMIDI(pitchBend);
+}
+
+// floating point map
+float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
+    float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+  
+    if (clamp) {
+      if (outputMax < outputMin) {
+        if (outVal < outputMax)  outVal = outputMax;
+        else if (outVal > outputMin)  outVal = outputMin;
+      } else {
+        if (outVal > outputMax) outVal = outputMax;
+        else if (outVal < outputMin)  outVal = outputMin;
+      }
+    }
+    return outVal;
+
+}
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
