@@ -11,7 +11,7 @@
 #define NUM_KEYS 32
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_KEYS, NEO_PIN, NEO_GRB + NEO_KHZ800);
 
-Adafruit_ADXL343 accel = Adafruit_ADXL343(123);
+Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 int last_ybend = 0;
 
 const byte ROWS = 4; // four rows
@@ -36,7 +36,7 @@ void setup(){
   customKeypad.begin();
 
   Serial.begin(9600);
-  //while (!Serial);
+  while (!Serial);
   Serial.println("MIDI keypad & pitchbend!");
   
   if(!accel.begin()) {
