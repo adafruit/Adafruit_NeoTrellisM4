@@ -11,27 +11,12 @@ Press key 2 to change the filter type
 //#include <arm_math.h>
 #include <Audio.h>
 #include "filters.h"
-#include <Adafruit_Keypad.h>
 #include <Adafruit_NeoPixel_ZeroDMA.h>
+#include "Adafruit_NeoTrellisM4.h"
 
 #define BIN_MAX 0.1 //adjust this value to change sensitivity
 #define NEO_PIN 11
 #define NUM_KEYS 32
-
-const byte ROWS = 4; // four rows
-const byte COLS = 8; // eight columns
-//define the symbols on the buttons of the keypads
-byte trellisKeys[ROWS][COLS] = {
-  {1,  2,  3,  4,  5,  6,  7,  8},
-  {9,  10, 11, 12, 13, 14, 15, 16},
-  {17, 18, 19, 20, 21, 22, 23, 24},
-  {25, 26, 27, 28, 29, 30, 31, 32}
-};
-byte rowPins[ROWS] = {14, 15, 16, 17}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {2, 3, 4, 5, 6, 7, 8, 9}; //connect to the column pinouts of the keypad
-
-//initialize an instance of class NewKeypad
-Adafruit_Keypad customKeypad = Adafruit_Keypad( makeKeymap(trellisKeys), rowPins, colPins, ROWS, COLS);
 
 // If this key is pressed FIR filter is turned off
 // which just passes the audio sraight through
@@ -81,7 +66,7 @@ void setup() {
   strip.show(); // Initialize all pixels to 'off'
   strip.setBrightness(255);
 
-  customKeypad.begin();
+  trellisKeypad.begin();
 
   // allocate memory for the audio library
   AudioMemory(20);
@@ -154,11 +139,11 @@ void loop()
     strip.show();
   }
   
-  customKeypad.tick();
+  trellisKeypad.tick();
   
-  while(customKeypad.available())
+  while(trellisKeypad.available())
   {
-    keypadEvent e = customKeypad.read();
+    keypadEvent e = trellisKeypad.read();
     if(e.bit.KEY == PASSTHRU_KEY){
       if(e.bit.EVENT == KEY_JUST_PRESSED){
         // If the passthru button is pushed, save the current

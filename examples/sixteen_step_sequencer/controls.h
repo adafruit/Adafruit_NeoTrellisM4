@@ -62,7 +62,7 @@
 #define VOL_INC 0.1
 
 #define TEMPO_OFFSET 24
-#define TEMPO_HOLD_INC 5
+#define TEMPO_HOLD_INC 2
 
 #define FILTER_OFF -1
 #define FILTER_LPF 0
@@ -108,7 +108,7 @@ public:
 	void recOverlay();
 
 	static Adafruit_NeoPixel_ZeroDMA strip;
-	static Adafruit_Keypad customKeypad;
+	static Adafruit_Keypad trellisKeypad;
 private:
 	Adafruit_ADXL343 accel;
 	void readAccelBitcrush();

@@ -28,6 +28,8 @@
 #define SEQ_TEMPO_MIN 100
 #define SEQ_TEMPO_MAX 800
 
+#define SEQ_TEMPO_STEP 2
+
 class Sequencer {
 public:
 	Sequencer() {}

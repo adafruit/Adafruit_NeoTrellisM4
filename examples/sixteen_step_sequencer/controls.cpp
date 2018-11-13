@@ -26,7 +26,7 @@ static byte rowPins[ROWS] = {14, 15, 16, 17}; //connect to the row pinouts of th
 static byte colPins[COLS] = {2, 3, 4, 5, 6, 7, 8, 9}; //connect to the column pinouts of the keypad
 
 Adafruit_NeoPixel_ZeroDMA Controls::strip(NUM_KEYS, NEO_PIN, NEO_GRB);
-Adafruit_Keypad Controls::customKeypad = Adafruit_Keypad( makeKeymap(trellisKeys), rowPins, colPins, ROWS, COLS);
+Adafruit_Keypad Controls::trellisKeypad = Adafruit_Keypad( makeKeymap(trellisKeys), rowPins, colPins, ROWS, COLS);
 
 extern Sampler sampler;
 extern Sequencer sequencer;
@@ -65,7 +65,7 @@ void Controls::begin()
 	_overlay[KEY_VOL_UP-1] = OVERLAY_VOL_OFF;
 	_overlay[KEY_VOL_DOWN-1] = OVERLAY_VOL_OFF;
 
-	customKeypad.begin();
+	trellisKeypad.begin();
 
   /* Initialise the sensor */
   if(!accel.begin())
@@ -115,18 +115,18 @@ void Controls::stateNormal()
 {
 	_overlay[KEY_REC-1] = 0;
 
-	while(customKeypad.available())
+	while(trellisKeypad.available())
 	{
-	keypadEvent e = customKeypad.read();
+	keypadEvent e = trellisKeypad.read();
 	int keyindex = e.bit.KEY - 1;
 	if(e.bit.EVENT == KEY_JUST_PRESSED){
 
-	  if(!customKeypad.isPressed(KEY_JUMP)){
-		  if(e.bit.KEY <= SEQ_NUM_STEPS && !customKeypad.isPressed(KEY_SOUND)
+	  if(!trellisKeypad.isPressed(KEY_JUMP)){
+		  if(e.bit.KEY <= SEQ_NUM_STEPS && !trellisKeypad.isPressed(KEY_SOUND)
 				  && !sequencer.isWriting()){
 			  sequencer.toggleStep(keyindex);
 		  }
-		  else if(e.bit.KEY <= SEQ_NUM_STEPS && sequencer.isWriting() && !customKeypad.isPressed(KEY_SOUND)){
+		  else if(e.bit.KEY <= SEQ_NUM_STEPS && sequencer.isWriting() && !trellisKeypad.isPressed(KEY_SOUND)){
 			  sequencer.toggleVoice(keyindex);
 		  }
 	  }
@@ -148,12 +148,12 @@ void Controls::stateNormal()
 		case(KEY_SAMPLE6):
 		case(KEY_SAMPLE7):
 		case(KEY_SAMPLE8):
-		  if(customKeypad.isPressed(KEY_SOUND)){
+		  if(trellisKeypad.isPressed(KEY_SOUND)){
 			  _overlay[keyindex] = OVERLAY_VOICE_ON;
 			  sampler.playSound(keyindex);
 			  sequencer.setActiveSound(keyindex);
 		  }
-		  else if(customKeypad.isPressed(KEY_JUMP)){
+		  else if(trellisKeypad.isPressed(KEY_JUMP)){
 			  sequencer.setStep(keyindex);
 		  }
 		  break;
@@ -302,7 +302,7 @@ void Controls::stateNormal()
 			  _overlay[keyindex] = 0;
 			  break;
 			case(KEY_STUTTER):
-			  if(!customKeypad.isPressed(KEY_STUTTER_FAST))
+			  if(!trellisKeypad.isPressed(KEY_STUTTER_FAST))
 				  sequencer.setStutter(0);
 			  else{
 				  sequencer.setStutter(STUTTER_FAST_MULT);
@@ -311,7 +311,7 @@ void Controls::stateNormal()
 			  _overlay[keyindex] = OVERLAY_SEQ_OFF;
 			  break;
 			case(KEY_STUTTER_FAST):
-			  if(!customKeypad.isPressed(KEY_STUTTER))
+			  if(!trellisKeypad.isPressed(KEY_STUTTER))
 				  sequencer.setStutter(0);
 			  else{
 				  sequencer.setStutter(STUTTER_MULT);
@@ -337,14 +337,14 @@ void Controls::stateNormal()
 	}
 
 	// tempo changing
-	if(customKeypad.isPressed(KEY_TEMPO_UP))
+	if(trellisKeypad.isPressed(KEY_TEMPO_UP))
 		tempoOverlay(true);
 
-	else if(customKeypad.isPressed(KEY_TEMPO_DOWN))
+	else if(trellisKeypad.isPressed(KEY_TEMPO_DOWN))
 		tempoOverlay(false);
 
 	// do our overlay
-	if(customKeypad.isPressed(KEY_SOUND)) _overlay[KEY_SOUND-1] = 0x0000FF;
+	if(trellisKeypad.isPressed(KEY_SOUND)) _overlay[KEY_SOUND-1] = 0x0000FF;
 	else _overlay[KEY_SOUND-1] = OVERLAY_VOICE_OFF;
 
 	if(sequencer.isWriting()) _overlay[KEY_WRITE-1] = 0x0000FF;
@@ -397,15 +397,15 @@ void Controls::stateRecording()
 	_overlay[KEY_REC-1] = OVERLAY_REC_ON;
 
 	for(int i=KEY_SAMPLE1; i<=KEY_SAMPLE8; i++){
-		if(customKeypad.isPressed(i)){
+		if(trellisKeypad.isPressed(i)){
 			// light it up
 			_overlay[i-1] = 0x0000FF;
 			recOverlay();
 
 			recorder.startRecording(i-KEY_SAMPLE1);
 
-			while(customKeypad.isPressed(i)){
-				customKeypad.tick();
+			while(trellisKeypad.isPressed(i)){
+				trellisKeypad.tick();
 				recorder.continueRecording();
 			}
 			_overlay[i-1] = 0;
@@ -417,9 +417,9 @@ void Controls::stateRecording()
 	}
 
 	// discard all other events
-	while(customKeypad.available())
+	while(trellisKeypad.available())
 	{
-		customKeypad.read();
+		trellisKeypad.read();
 	}
 
 	recOverlay();
@@ -427,10 +427,10 @@ void Controls::stateRecording()
 
 void Controls::run()
 {
-	customKeypad.tick();
+	trellisKeypad.tick();
 	strip.clear();
 
-	if(!sequencer.isRunning() && customKeypad.isPressed(KEY_REC))
+	if(!sequencer.isRunning() && trellisKeypad.isPressed(KEY_REC))
 		stateRecording();
 	else
 		stateNormal();

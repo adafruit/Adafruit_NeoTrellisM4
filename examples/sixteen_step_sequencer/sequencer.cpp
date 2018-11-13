@@ -153,8 +153,8 @@ void Sequencer::changeTempo(bool inc)
 {
 	if(!_stutter){
 		// don't change during a stutter and constrain to min and max vals
-		if(inc) _tempTempo+=5;
-		else _tempTempo-=5;
+		if(inc) _tempTempo+=1;
+		else _tempTempo-=1;
 
 		_tempTempo = min(max(_tempTempo, SEQ_TEMPO_MIN), SEQ_TEMPO_MAX);
 	}
