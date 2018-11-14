@@ -17,7 +17,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  trellisKeypad.tick();
+  tick_trellis();
 
   while(trellisKeypad.available()){
     keypadEvent e = trellisKeypad.read();

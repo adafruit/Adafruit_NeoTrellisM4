@@ -67,7 +67,7 @@ void setup(){
   Serial.begin(9600);
   //while (!Serial);
 
-  trellisKeypad.tick();
+  tick_trellis();
 
   strip.setBrightness(255);
   
@@ -123,7 +123,7 @@ void noteOff(int num){
 }
  
 void loop() {
-  trellisKeypad.tick();
+  tick_trellis();
   
   while(trellisKeypad.available())
   {

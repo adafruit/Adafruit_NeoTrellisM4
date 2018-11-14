@@ -10,23 +10,12 @@
 #include "filters.h"
 #include "sequencer.h"
 #include "recorder.h"
+#include "Adafruit_NeoTrellisM4.h"
 
 #include <Adafruit_Sensor.h>
 
-static const byte ROWS = 4; // four rows
-static const byte COLS = 8; // eight columns
-//define the symbols on the buttons of the keypads
-static byte trellisKeys[ROWS][COLS] = {
-  {1,  2,  3,  4,  5,  6,  7,  8},
-  {9,  10, 11, 12, 13, 14, 15, 16},
-  {17, 18, 19, 20, 21, 22, 23, 24},
-  {25, 26, 27, 28, 29, 30, 31, 32}
-};
-static byte rowPins[ROWS] = {14, 15, 16, 17}; //connect to the row pinouts of the keypad
-static byte colPins[COLS] = {2, 3, 4, 5, 6, 7, 8, 9}; //connect to the column pinouts of the keypad
 
 Adafruit_NeoPixel_ZeroDMA Controls::strip(NUM_KEYS, NEO_PIN, NEO_GRB);
-Adafruit_Keypad Controls::trellisKeypad = Adafruit_Keypad( makeKeymap(trellisKeys), rowPins, colPins, ROWS, COLS);
 
 extern Sampler sampler;
 extern Sequencer sequencer;
@@ -405,7 +394,7 @@ void Controls::stateRecording()
 			recorder.startRecording(i-KEY_SAMPLE1);
 
 			while(trellisKeypad.isPressed(i)){
-				trellisKeypad.tick();
+				tick_trellis();
 				recorder.continueRecording();
 			}
 			_overlay[i-1] = 0;
@@ -427,7 +416,7 @@ void Controls::stateRecording()
 
 void Controls::run()
 {
-	trellisKeypad.tick();
+	tick_trellis();
 	strip.clear();
 
 	if(!sequencer.isRunning() && trellisKeypad.isPressed(KEY_REC))

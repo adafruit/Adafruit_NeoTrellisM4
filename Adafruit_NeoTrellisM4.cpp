@@ -12,3 +12,21 @@ byte colPins[COLS] = {2, 3, 4, 5, 6, 7, 8, 9}; //connect to the column pinouts o
 
 //initialize an instance of class NewKeypad
 Adafruit_Keypad trellisKeypad = Adafruit_Keypad( makeKeymap(trellisKeys), rowPins, colPins, ROWS, COLS);
+
+void tick_trellis()
+{
+	tick_trellis();
+
+	// look for an entire column being pressed at once and if it was, clear the whole buffer
+	uint8_t rcount[] = {0, 0, 0, 0, 0, 0, 0, 0};
+	for(int i=0; i<31; i++){
+		if(trellisKeypad.justPressed(i+1, false))
+			rcount[i%8]++;
+	}
+	for(int i=0; i<8; i++){
+		if(rcount[i] >= 4){
+			trellisKeypad.clear();
+			break;
+		}
+	}
+}

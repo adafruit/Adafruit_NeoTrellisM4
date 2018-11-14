@@ -8,7 +8,6 @@
 #ifndef CONTROLS_H_
 #define CONTROLS_H_
 
-#include <Adafruit_Keypad.h>
 #include <Adafruit_NeoPixel_ZeroDMA.h>
 #include <Adafruit_ADXL343.h>
 
@@ -80,9 +79,9 @@
 #define OVERLAY_SOLO_OFF	0x050005
 #define OVERLAY_SOLO_ON		0x7F007F
 
-#define OVERLAY_TEMPO_OFF	0x000F00
+#define OVERLAY_TEMPO_OFF	0x0F0400
 
-#define OVERLAY_VOL_OFF		0x000F0F
+#define OVERLAY_VOL_OFF   	0x000F0F
 
 #define OVERLAY_REC_ON		0xFF0000
 
@@ -108,7 +107,6 @@ public:
 	void recOverlay();
 
 	static Adafruit_NeoPixel_ZeroDMA strip;
-	static Adafruit_Keypad trellisKeypad;
 private:
 	Adafruit_ADXL343 accel;
 	void readAccelBitcrush();

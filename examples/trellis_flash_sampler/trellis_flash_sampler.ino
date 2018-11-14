@@ -70,7 +70,7 @@ void setup() {
 
 void loop() {
 
-  trellisKeypad.tick();
+  tick_trellis();
   
   strip.clear();
   while(trellisKeypad.available())

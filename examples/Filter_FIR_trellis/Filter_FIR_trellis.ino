@@ -139,7 +139,7 @@ void loop()
     strip.show();
   }
   
-  trellisKeypad.tick();
+  tick_trellis();
   
   while(trellisKeypad.available())
   {

@@ -17,4 +17,6 @@ extern byte colPins[COLS];
 
 extern Adafruit_Keypad trellisKeypad;
 
+extern void tick_trellis();
+
 #endif

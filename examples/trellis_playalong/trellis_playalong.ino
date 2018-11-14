@@ -129,7 +129,7 @@ void noteOff(int num){
 }
  
 void loop() {
-  trellisKeypad.tick();
+  tick_trellis();
   
   while(trellisKeypad.available())
   {
