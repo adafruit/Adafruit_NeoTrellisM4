@@ -15,7 +15,7 @@ Adafruit_Keypad trellisKeypad = Adafruit_Keypad( makeKeymap(trellisKeys), rowPin
 
 void tick_trellis()
 {
-	tick_trellis();
+	trellisKeypad.tick();
 
 	// look for an entire column being pressed at once and if it was, clear the whole buffer
 	uint8_t rcount[] = {0, 0, 0, 0, 0, 0, 0, 0};
