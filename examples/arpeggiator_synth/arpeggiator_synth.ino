@@ -1,4 +1,4 @@
-/* Arpeggiator - arpeggiator for Adafruit Neotrellis
+/* Arpeggiator Synth for Adafruit Neotrellis M4
  *  by Collin Cunningham for Adafruit Industries, inspired by Stretta's Polygome
  *  https://www.adafruit.com/product/3938
  * 
