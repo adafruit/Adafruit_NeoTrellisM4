@@ -1,7 +1,9 @@
+//misc//////////////////////////
 #define OCTAVE 4  //determines note pitch
 #define BPM 320   //increase for faster tempo
 
-//colors
+
+//colors//////////////////////////
 uint32_t white = 0xFFFFFF;
 uint32_t red = 0xFF0000;
 uint32_t blue = 0x0000FF;
@@ -12,10 +14,12 @@ uint32_t yellow = 0xFFFF00;
 uint32_t offColor = blue;   //color of deactivated buttons
 uint32_t onColor = magenta; //color of activated buttons
 
-//waveform
+
+//waveform//////////////////////////
 int wave = 0;  // 0=sine, 1= square, 2= sawtooth, 3 = triangle
 
-// Musical mode / scale intervals
+
+// Musical modes / scales
 //uint8_t scale[] = { 0, 2, 3, 5, 7, 9, 10, 12 }; //dorian
 uint8_t scale[] = { 0, 2, 4, 5, 7, 9, 11, 12 };  //ionian
 //uint8_t scale[] = { 0, 1, 2, 3, 5, 7,  8, 10,};  //phrygian
@@ -24,7 +28,8 @@ uint8_t scale[] = { 0, 2, 4, 5, 7, 9, 11, 12 };  //ionian
 //uint8_t scale[] = { 0, 2, 3, 5, 7, 8, 10, 12 }; //aeolian
 //uint8_t scale[] = { 0, 1, 3, 5, 6, 8, 10, 12 }; //locrian
 
-//pattern
+
+//pattern//////////////////////////
 //int8_t arp[6][2] = { //lil dipper
 //  {  0,  0 },
 //  {  1, 0 },
