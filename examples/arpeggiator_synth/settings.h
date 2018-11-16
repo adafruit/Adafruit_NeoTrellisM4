@@ -1,6 +1,6 @@
 
 //misc//////////////////////////
-#define OCTAVE 4  //determines note pitch
+#define OCTAVE 5  //determines note pitch
 #define BPM 320   //increase for faster tempo
 
 
@@ -32,14 +32,14 @@ uint8_t scale[] = { 0, 2, 3, 5, 7, 8, 10, 12 }; //aeolian
 
 
 //pattern//////////////////////////
-//int8_t arp[6][2] = { //lil dipper
-//  {  0,  0 },
-//  {  1, 0 },
-//  {  2, 0 },
-//  {  2,  1 },
-//  {  1,  1 },
-//  {  1,  0 },
-//};
+int8_t arp[6][2] = { //lil dipper
+  {  0,  0 },
+  {  1, 0 },
+  {  2, 0 },
+  {  2,  1 },
+  {  1,  1 },
+  {  1,  0 },
+};
 
 //int8_t arp[6][2] = { //circle
 //  {  0,  0 },
@@ -77,12 +77,12 @@ uint8_t scale[] = { 0, 2, 3, 5, 7, 8, 10, 12 }; //aeolian
 //  { -1,  1 },
 //};
 
-int8_t arp[6][2] = { //T-shape
-  {  0,  0 },
-  {  1, 0 },
-  {  2, 0 },
-  {  2,  -1 },
-  {  2,  0 },
-  {  2,  1 },
-};
+//int8_t arp[6][2] = { //T-shape
+//  {  0,  0 },
+//  {  1, 0 },
+//  {  2, 0 },
+//  {  2,  -1 },
+//  {  2,  0 },
+//  {  2,  1 },
+//};
 
