@@ -10,7 +10,7 @@
 #include "Adafruit_NeoTrellisM4.h"
 #include <Adafruit_NeoPixel_ZeroDMA.h>
 
-#define NEO_PIN 11
+#define NEO_PIN 10
 #define NUM_KEYS 32
 
 AudioSynthWaveform sine0, sine1, sine2, sine3;
