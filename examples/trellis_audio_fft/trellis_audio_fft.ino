@@ -4,7 +4,7 @@
 #include <Adafruit_NeoPixel_ZeroDMA.h>
 
 #define BIN_MAX 0.1 //adjust this value to change sensitivity
-#define NEO_PIN 11
+#define NEO_PIN 10
 
 // Create the Audio components.  These should be created in the
 // order data flows, inputs/sources -> processing -> outputs

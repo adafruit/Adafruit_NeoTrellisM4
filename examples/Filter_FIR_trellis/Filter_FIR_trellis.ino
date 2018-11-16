@@ -15,7 +15,7 @@ Press key 2 to change the filter type
 #include "Adafruit_NeoTrellisM4.h"
 
 #define BIN_MAX 0.1 //adjust this value to change sensitivity
-#define NEO_PIN 11
+#define NEO_PIN 10
 #define NUM_KEYS 32
 
 // If this key is pressed FIR filter is turned off
