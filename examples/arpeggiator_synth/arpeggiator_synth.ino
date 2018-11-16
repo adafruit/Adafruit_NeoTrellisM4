@@ -9,9 +9,8 @@
 #include <Adafruit_Keypad.h>
 #include <Adafruit_NeoPixel.h>
 #include "settings.h"
+#include "MIDIUSB.h"
 
-#define CHANNEL   1  // MIDI channel number
-#define EXT_CLOCK 0  // 0 for internal clock, 1 for external
 #define WIDTH      8
 #define HEIGHT     4
 
@@ -202,27 +201,31 @@ uint8_t findNoteFromIndex(uint8_t buttonIndex) {
 
 void playNoteForButton(uint8_t buttonIndex) {
 
-//MIDI stub
-//  midiEventPacket_t noteOn = {0x09, 0x90 | CHANNEL, findNoteFromIndex(buttonIndex), 100};
-//  MidiUSB.sendMIDI(noteOn);
-
-  noteOn(findNoteFromIndex(buttonIndex), buttonIndex);
+  if (MIDI_OUT) {
+    midiEventPacket_t noteOn = {0x09, 0x90 | CHANNEL, findNoteFromIndex(buttonIndex), 100};
+    MidiUSB.sendMIDI(noteOn);
+  }
+  else {
+    noteOn(findNoteFromIndex(buttonIndex), buttonIndex);
+  }
 
   strip.setPixelColor(buttonIndex, onColor);
-
+  
 }
 
 
 void stopNoteForButton(uint8_t buttonIndex) {
 
-//MIDI stub
-//  midiEventPacket_t noteOff = {0x08, 0x80 | CHANNEL, findNoteFromIndex(buttonIndex), 0};
-//  MidiUSB.sendMIDI(noteOff);
-  
-  noteOff(findNoteFromIndex(buttonIndex), buttonIndex);
-  
-  strip.setPixelColor(buttonIndex, offColor);
+  if (MIDI_OUT) {
+    midiEventPacket_t noteOff = {0x08, 0x80 | CHANNEL, findNoteFromIndex(buttonIndex), 0};
+    MidiUSB.sendMIDI(noteOff);
+  }
+  else {
+    noteOff(findNoteFromIndex(buttonIndex), buttonIndex);
+  }
 
+  strip.setPixelColor(buttonIndex, offColor);
+  
 }
 
 void debugLed(bool light){
