@@ -11,7 +11,7 @@
 #include "Adafruit_NeoTrellisM4.h"
 #include <Adafruit_NeoPixel_ZeroDMA.h>
 
-#define NEO_PIN 11
+#define NEO_PIN 10
 #define NUM_KEYS 32
 
 // Create the Audio components.  These should be created in the
@@ -106,5 +106,3 @@ void loop() {
   strip.show();
   delay(10);
 }
-
-
