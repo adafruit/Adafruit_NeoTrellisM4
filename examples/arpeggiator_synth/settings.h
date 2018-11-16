@@ -23,11 +23,11 @@ int wave = 0;  // 0=sine, 1= square, 2= sawtooth, 3 = triangle
 
 // Musical modes / scales
 //uint8_t scale[] = { 0, 2, 3, 5, 7, 9, 10, 12 }; //dorian
-uint8_t scale[] = { 0, 2, 4, 5, 7, 9, 11, 12 };  //ionian
+//uint8_t scale[] = { 0, 2, 4, 5, 7, 9, 11, 12 };  //ionian
 //uint8_t scale[] = { 0, 1, 2, 3, 5, 7,  8, 10,};  //phrygian
 //uint8_t scale[] = { 0, 2, 4, 6, 7, 9, 10, 11 };  //lydian
 //uint8_t scale[] = { 0, 2, 4, 5, 7, 9, 10, 12 }; //mixolydian
-//uint8_t scale[] = { 0, 2, 3, 5, 7, 8, 10, 12 }; //aeolian
+uint8_t scale[] = { 0, 2, 3, 5, 7, 8, 10, 12 }; //aeolian
 //uint8_t scale[] = { 0, 1, 3, 5, 6, 8, 10, 12 }; //locrian
 
 
