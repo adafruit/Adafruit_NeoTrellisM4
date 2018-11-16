@@ -2,7 +2,7 @@
 //misc//////////////////////////
 #define OCTAVE 4  //determines note pitch
 #define BPM 320   //increase for faster tempo
-#define MIDI_OUT  true  //enables MIDI output & disables synth
+#define MIDI_OUT  false  //enables MIDI output & disables synth
 #define CHANNEL   1  // MIDI channel number
 
 //colors//////////////////////////
