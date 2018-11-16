@@ -1,16 +1,18 @@
+
 //misc//////////////////////////
 #define OCTAVE 4  //determines note pitch
 #define BPM 320   //increase for faster tempo
 
 
 //colors//////////////////////////
-uint32_t white = 0xFFFFFF;
-uint32_t red = 0xFF0000;
-uint32_t blue = 0x0000FF;
-uint32_t green = 0x00FF00;
-uint32_t teal = 0x00FFFF;
+uint32_t white =   0xFFFFFF;
+uint32_t red =     0xFF0000;
+uint32_t blue =    0x0000FF;
+uint32_t green =   0x00FF00;
+uint32_t teal =    0x00FFFF;
 uint32_t magenta = 0xFF00FF;
-uint32_t yellow = 0xFFFF00;
+uint32_t yellow =  0xFFFF00;
+uint32_t off =     0x000000;
 uint32_t offColor = blue;   //color of deactivated buttons
 uint32_t onColor = magenta; //color of activated buttons
 
@@ -39,14 +41,14 @@ uint8_t scale[] = { 0, 2, 4, 5, 7, 9, 11, 12 };  //ionian
 //  {  1,  0 },
 //};
 
-int8_t arp[6][2] = { //circle
-  {  0,  0 },
-  {  0, -1 },
-  {  1,  0 },
-  {  0,  1 },
-  { -1,  0 },
-  {  0, -1 },
-};
+//int8_t arp[6][2] = { //circle
+//  {  0,  0 },
+//  {  0, -1 },
+//  {  1,  0 },
+//  {  0,  1 },
+//  { -1,  0 },
+//  {  0, -1 },
+//};
 
 //int8_t arp[6][2] = { //one note
 //  {  0,  0 },
@@ -75,12 +77,12 @@ int8_t arp[6][2] = { //circle
 //  { -1,  1 },
 //};
 
-//int8_t arp[6][2] = { //T-shape
-//  {  0,  0 },
-//  {  1, 0 },
-//  {  2, 0 },
-//  {  2,  -1 },
-//  {  2,  0 },
-//  {  2,  1 },
-//};
+int8_t arp[6][2] = { //T-shape
+  {  0,  0 },
+  {  1, 0 },
+  {  2, 0 },
+  {  2,  -1 },
+  {  2,  0 },
+  {  2,  1 },
+};
 
