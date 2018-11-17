@@ -26,28 +26,37 @@ Adafruit_NeoTrellisM4::Adafruit_NeoTrellisM4(void) :
   _midi_channel_usb = 0;
   _midi_channel_usb = 0;
   _pending_midi = false;
+  _auto_update = true;
 }
 
 void Adafruit_NeoTrellisM4::begin(void) {
   Adafruit_Keypad::begin();
 
   // Initialize all pixels to 'off'
-  Adafruit_NeoPixel::begin();
+  Adafruit_NeoPixel_ZeroDMA::begin();
   fill(0x0);
-  Adafruit_NeoPixel::show();
-  Adafruit_NeoPixel::setBrightness(255);
+  Adafruit_NeoPixel_ZeroDMA::show();
+  Adafruit_NeoPixel_ZeroDMA::setBrightness(255);
 }
 
 void Adafruit_NeoTrellisM4::setPixelColor(uint32_t pixel, uint32_t color) {
-  Adafruit_NeoPixel::setPixelColor(pixel, color);
-  Adafruit_NeoPixel::show();
+  Adafruit_NeoPixel_ZeroDMA::setPixelColor(pixel, color);
+  if (_auto_update) {
+    Adafruit_NeoPixel_ZeroDMA::show();
+  }
+}
+
+void Adafruit_NeoTrellisM4::autoUpdateNeoPixels(boolean flag) {
+  _auto_update = flag;
 }
 
 void Adafruit_NeoTrellisM4::fill(uint32_t color) {
   for (int i=0; i<ROWS*COLS; i++) {
-    Adafruit_NeoPixel::setPixelColor(i, color);
+    Adafruit_NeoPixel_ZeroDMA::setPixelColor(i, color);
   }
-  Adafruit_NeoPixel::show();
+  if (_auto_update) {
+    Adafruit_NeoPixel_ZeroDMA::show();
+  }
 }
 
 void Adafruit_NeoTrellisM4::tick(void)

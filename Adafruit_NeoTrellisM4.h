@@ -19,6 +19,8 @@ class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_Z
   Adafruit_NeoTrellisM4();
   void begin(void);
   void tick(void);
+
+  void autoUpdateNeoPixels(boolean flag);
   void setPixelColor(uint32_t pixel, uint32_t color);
   void fill(uint32_t color);
 
@@ -34,7 +36,7 @@ class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_Z
 
  private:
   int _num_keys, _rows, _cols;
-  boolean _pending_midi;
+  boolean _pending_midi, _auto_update;
   int _midi_channel_usb, _midi_channel_uart;
 };
 
