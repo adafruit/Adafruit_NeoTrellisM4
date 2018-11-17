@@ -92,7 +92,6 @@ void loop() {
     // Cycle foreground colors
     if (key >= 24 && key <=29 ) {
       int cc_idx = 12 + (key-24);
-      //Serial.print("CCIDX: ");  Serial.println(cc_idx);
       uint16_t val = cc_curr_value[cc_idx];
       val++;
       if (val > 127) val = 0;  // wrap around
