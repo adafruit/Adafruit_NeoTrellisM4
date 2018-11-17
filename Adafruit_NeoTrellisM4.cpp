@@ -23,6 +23,9 @@ Adafruit_NeoTrellisM4::Adafruit_NeoTrellisM4(void) :
   _num_keys = ROWS * COLS;
   _rows = ROWS;
   _cols = COLS;
+  _midi_channel_usb = 0;
+  _midi_channel_usb = 0;
+  _pending_midi = false;
 }
 
 void Adafruit_NeoTrellisM4::begin(void) {
@@ -62,5 +65,48 @@ void Adafruit_NeoTrellisM4::tick(void)
       Adafruit_Keypad::clear();
       break;
     }
+  }
+}
+
+
+void Adafruit_NeoTrellisM4::setUSBMIDIchannel(uint8_t c) {
+  _midi_channel_usb = min(15, c);  // channel can only be between 0-15;
+}
+
+void Adafruit_NeoTrellisM4::setUARTMIDIchannel(uint8_t c) {
+  _midi_channel_uart = min(15, c);  // channel can only be between 0-15;
+}
+
+
+void Adafruit_NeoTrellisM4::noteOn(byte pitch, byte velocity) {
+  midiEventPacket_t noteOn = {0x09, 0x90 | _midi_channel_usb, pitch, velocity};
+  MidiUSB.sendMIDI(noteOn);
+  _pending_midi = true;
+}
+
+void Adafruit_NeoTrellisM4::noteOff(byte pitch, byte velocity) {
+  midiEventPacket_t noteOff = {0x08, 0x80 | _midi_channel_usb, pitch, velocity};
+  MidiUSB.sendMIDI(noteOff);
+  _pending_midi = true;
+}
+
+void Adafruit_NeoTrellisM4::pitchBend(int value) {
+  byte lowValue = value & 0x7F;
+  byte highValue = value >> 7;
+  midiEventPacket_t pitchBend = {0x0E, 0xE0 | _midi_channel_usb, lowValue, highValue};
+  MidiUSB.sendMIDI(pitchBend);
+  _pending_midi = true;
+}
+
+void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
+  midiEventPacket_t event = {0x0B, 0xB0 | _midi_channel_usb, control, value};
+  MidiUSB.sendMIDI(event);
+  _pending_midi = true;
+}
+
+void Adafruit_NeoTrellisM4::sendMIDI(void) {
+  if (_pending_midi) {
+    MidiUSB.flush();
+    _pending_midi = false;
   }
 }
