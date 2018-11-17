@@ -1,11 +1,7 @@
+/* Simple Audio library demonstration - pocket synth with C major scale and 4 wave types */
+
 #include <Audio.h>
-#include <Wire.h>
-
-#include "Adafruit_NeoTrellisM4.h"
-#include <Adafruit_NeoPixel.h>
-
-#define NEO_PIN 10
-#define NUM_KEYS 32
+#include <Adafruit_NeoTrellisM4.h>
 
 AudioSynthWaveform sine0, sine1, sine2, sine3;
 AudioSynthWaveform *waves[4] = {
@@ -56,21 +52,16 @@ AudioConnection patchCord43(delay1, 3, mixerRight, 2);
 AudioConnection patchCord41(mixerLeft, 0, audioOut, 0);
 AudioConnection patchCord42(mixerRight, 0, audioOut, 1);
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_KEYS, NEO_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
+Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 
 void setup(){
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-
-  trellisKeypad.begin();
-  
-  Serial.begin(9600);
+  Serial.begin(115200);
   //while (!Serial);
 
-  tick_trellis();
+  trellis.begin();
+  trellis.setBrightness(255);  
 
-  strip.setBrightness(255);
-  
   AudioMemory(120);
 
   // reduce the gain on some channels, so half of the channels
@@ -123,62 +114,37 @@ void noteOff(int num){
 }
  
 void loop() {
-  tick_trellis();
+  trellis.tick();
   
-  while(trellisKeypad.available())
+  while(trellis.available())
   {
-    keypadEvent e = trellisKeypad.read();
-    int keyindex = e.bit.KEY - 1;
+    keypadEvent e = trellis.read();
+    int keyindex = e.bit.KEY;
     if(e.bit.EVENT == KEY_JUST_PRESSED){
-        strip.setPixelColor(keyindex, 0xFFFFFF);
+        //trellis.setPixelColor(keyindex, 0xFFFFFF); // plain white
+        trellis.setPixelColor(keyindex, Wheel(keyindex * 255 / 32)); // rainbow!
         noteOn(keyindex);
       }
     else if(e.bit.EVENT == KEY_JUST_RELEASED){
         noteOff(keyindex);
-        strip.setPixelColor(keyindex, 0);
+        trellis.setPixelColor(keyindex, 0);
       }
    }
-  strip.show();
   delay(10);
 }
 
-
-// Fill the dots one after the other with a color
-void colorWipe(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, c);
-    strip.show();
-    delay(wait);
-  }
-}
-
-
-
-// Slightly different, this makes the rainbow equally distributed throughout
-void rainbowCycle(uint8_t wait) {
-  uint16_t i, j;
-
-  for(j=0; j<256; j++) { // 5 cycles of all colors on wheel
-    for(i=0; i< strip.numPixels(); i++) {
-      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
-    }
-    strip.show();
-    delay(wait);
-  }
-}
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;
   if(WheelPos < 85) {
-    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+    return Adafruit_NeoPixel::Color(255 - WheelPos * 3, 0, WheelPos * 3);
   }
   if(WheelPos < 170) {
     WheelPos -= 85;
-    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+    return Adafruit_NeoPixel::Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
   WheelPos -= 170;
-  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  return Adafruit_NeoPixel::Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
-

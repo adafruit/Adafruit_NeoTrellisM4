@@ -40,7 +40,7 @@ Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 
 void setup(){
   Serial.begin(115200);
-  while (!Serial);
+  //while (!Serial);
 
   trellis.begin();
   trellis.setBrightness(255);
