@@ -45,6 +45,10 @@ struct fir_filter fir_list[] = {
 int filterActive = -1;
 
 void setup() {
+  Serial.begin(115200);
+  //while (!Serial);
+  delay(100);
+  
   sampler.begin();
   controls.begin();
   sequencer.begin();

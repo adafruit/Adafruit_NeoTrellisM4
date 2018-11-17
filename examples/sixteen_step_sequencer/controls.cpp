@@ -10,12 +10,12 @@
 #include "filters.h"
 #include "sequencer.h"
 #include "recorder.h"
-#include "Adafruit_NeoTrellisM4.h"
 
-#include <Adafruit_Sensor.h>
+Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
+Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 
-
-Adafruit_NeoPixel_ZeroDMA Controls::strip(NUM_KEYS, NEO_PIN, NEO_GRB);
+static const byte ROWS = 4; // four rows
+static const byte COLS = 8; // eight columns
 
 extern Sampler sampler;
 extern Sequencer sequencer;
@@ -29,39 +29,43 @@ extern AudioMixer4        volOutR;
 
 void Controls::begin()
 {
-	strip.begin();
-	strip.show(); // Initialize all pixels to 'off'
-	strip.setBrightness(255);
+  Serial.println("Control initialization");
+	trellis.begin();
+	trellis.setBrightness(255);
+  trellis.autoUpdateNeoPixels(false);
+  trellis.show();
+
+  Serial.println("Trellis started");
+  
 	memset(_overlay, 0, sizeof(uint32_t)*NUM_KEYS);
 
-	_overlay[KEY_SOUND-1] = OVERLAY_VOICE_OFF;
-	_overlay[KEY_WRITE-1] = OVERLAY_VOICE_OFF;
+	_overlay[KEY_SOUND] = OVERLAY_VOICE_OFF;
+	_overlay[KEY_WRITE] = OVERLAY_VOICE_OFF;
 
-	_overlay[KEY_JUMP-1] = OVERLAY_SEQ_OFF;
-	_overlay[KEY_STUTTER-1] = OVERLAY_SEQ_OFF;
-	_overlay[KEY_STUTTER_FAST-1] = OVERLAY_SEQ_OFF;
+	_overlay[KEY_JUMP] = OVERLAY_SEQ_OFF;
+	_overlay[KEY_STUTTER] = OVERLAY_SEQ_OFF;
+	_overlay[KEY_STUTTER_FAST] = OVERLAY_SEQ_OFF;
 
-	_overlay[KEY_LPF-1] = OVERLAY_FX_OFF;
-	_overlay[KEY_HPF-1] = OVERLAY_FX_OFF;
-	_overlay[KEY_CRUSH-1] = OVERLAY_FX_OFF;
+	_overlay[KEY_LPF] = OVERLAY_FX_OFF;
+	_overlay[KEY_HPF] = OVERLAY_FX_OFF;
+	_overlay[KEY_CRUSH] = OVERLAY_FX_OFF;
 
-	_overlay[KEY_SOLO_REC-1] = OVERLAY_SOLO_OFF;
-	_overlay[KEY_SOLO_KIT-1] = OVERLAY_SOLO_OFF;
+	_overlay[KEY_SOLO_REC] = OVERLAY_SOLO_OFF;
+	_overlay[KEY_SOLO_KIT] = OVERLAY_SOLO_OFF;
 
-	_overlay[KEY_TEMPO_UP-1] = OVERLAY_TEMPO_OFF;
-	_overlay[KEY_TEMPO_DOWN-1] = OVERLAY_TEMPO_OFF;
+	_overlay[KEY_TEMPO_UP] = OVERLAY_TEMPO_OFF;
+	_overlay[KEY_TEMPO_DOWN] = OVERLAY_TEMPO_OFF;
 
-	_overlay[KEY_VOL_UP-1] = OVERLAY_VOL_OFF;
-	_overlay[KEY_VOL_DOWN-1] = OVERLAY_VOL_OFF;
-
-	trellisKeypad.begin();
+	_overlay[KEY_VOL_UP] = OVERLAY_VOL_OFF;
+	_overlay[KEY_VOL_DOWN] = OVERLAY_VOL_OFF;
 
   /* Initialise the sensor */
-  if(!accel.begin())
-  {
-	/* There was a problem detecting the ADXL343 ... check your connections */
-	Serial.println("Ooops, no ADXL343 detected");
-	while(1);
+  if(!accel.begin()) {
+	  /* There was a problem detecting the ADXL343 ... check your connections */
+	  Serial.println("Ooops, no ADXL343 detected");
+	  while(1);
+  } else {
+    Serial.println("ADXL343 detected");
   }
 
   accel.setRange(ADXL343_RANGE_16_G);
@@ -102,20 +106,20 @@ void Controls::tempoOverlay(bool inc)
 
 void Controls::stateNormal()
 {
-	_overlay[KEY_REC-1] = 0;
+	_overlay[KEY_REC] = 0;
 
-	while(trellisKeypad.available())
+	while(trellis.available())
 	{
-	keypadEvent e = trellisKeypad.read();
-	int keyindex = e.bit.KEY - 1;
+	keypadEvent e = trellis.read();
+	int keyindex = e.bit.KEY;
 	if(e.bit.EVENT == KEY_JUST_PRESSED){
 
-	  if(!trellisKeypad.isPressed(KEY_JUMP)){
-		  if(e.bit.KEY <= SEQ_NUM_STEPS && !trellisKeypad.isPressed(KEY_SOUND)
+	  if(!trellis.isPressed(KEY_JUMP)){
+		  if(e.bit.KEY <= SEQ_NUM_STEPS && !trellis.isPressed(KEY_SOUND)
 				  && !sequencer.isWriting()){
 			  sequencer.toggleStep(keyindex);
 		  }
-		  else if(e.bit.KEY <= SEQ_NUM_STEPS && sequencer.isWriting() && !trellisKeypad.isPressed(KEY_SOUND)){
+		  else if(e.bit.KEY <= SEQ_NUM_STEPS && sequencer.isWriting() && !trellis.isPressed(KEY_SOUND)){
 			  sequencer.toggleVoice(keyindex);
 		  }
 	  }
@@ -137,12 +141,12 @@ void Controls::stateNormal()
 		case(KEY_SAMPLE6):
 		case(KEY_SAMPLE7):
 		case(KEY_SAMPLE8):
-		  if(trellisKeypad.isPressed(KEY_SOUND)){
+		  if(trellis.isPressed(KEY_SOUND)){
 			  _overlay[keyindex] = OVERLAY_VOICE_ON;
 			  sampler.playSound(keyindex);
 			  sequencer.setActiveSound(keyindex);
 		  }
-		  else if(trellisKeypad.isPressed(KEY_JUMP)){
+		  else if(trellis.isPressed(KEY_JUMP)){
 			  sequencer.setStep(keyindex);
 		  }
 		  break;
@@ -150,7 +154,7 @@ void Controls::stateNormal()
 		case(KEY_LPF):
 			if(filterActive != FILTER_LPF){
 				if(filterActive == FILTER_HPF)
-					_overlay[KEY_HPF-1] = OVERLAY_FX_OFF;
+					_overlay[KEY_HPF] = OVERLAY_FX_OFF;
 
 				_overlay[keyindex] = OVERLAY_FX_ON;
 				myFilterL.begin(fir_list[FILTER_LPF].coeffs, fir_list[FILTER_LPF].num_coeffs);
@@ -167,7 +171,7 @@ void Controls::stateNormal()
 		case(KEY_HPF):
 			if(filterActive != FILTER_HPF){
 				if(filterActive == FILTER_LPF)
-					_overlay[KEY_LPF-1] = OVERLAY_FX_OFF;
+					_overlay[KEY_LPF] = OVERLAY_FX_OFF;
 
 				_overlay[keyindex] = OVERLAY_FX_ON;
 				myFilterL.begin(fir_list[FILTER_HPF].coeffs, fir_list[FILTER_HPF].num_coeffs);
@@ -206,7 +210,7 @@ void Controls::stateNormal()
 			}
 			else {
 				if(sampler.getSolo() == SOLO_KIT)
-					_overlay[KEY_SOLO_KIT-1] = OVERLAY_SOLO_OFF;
+					_overlay[KEY_SOLO_KIT] = OVERLAY_SOLO_OFF;
 				_overlay[keyindex] = OVERLAY_SOLO_ON;
 				sampler.setSolo(SOLO_REC);
 			}
@@ -219,7 +223,7 @@ void Controls::stateNormal()
 			}
 			else {
 				if(sampler.getSolo() == SOLO_REC)
-					_overlay[KEY_SOLO_REC-1] = OVERLAY_SOLO_OFF;
+					_overlay[KEY_SOLO_REC] = OVERLAY_SOLO_OFF;
 				_overlay[keyindex] = OVERLAY_SOLO_ON;
 				sampler.setSolo(SOLO_KIT);
 			}
@@ -242,12 +246,12 @@ void Controls::stateNormal()
 		case(KEY_STUTTER):
 			sequencer.setStutter(STUTTER_MULT);
 			_overlay[keyindex] = OVERLAY_SEQ_ON;
-			_overlay[KEY_STUTTER_FAST-1] = OVERLAY_SEQ_OFF;
+			_overlay[KEY_STUTTER_FAST] = OVERLAY_SEQ_OFF;
 		  break;
 		case(KEY_STUTTER_FAST):
 			sequencer.setStutter(STUTTER_FAST_MULT);
 			_overlay[keyindex] = OVERLAY_SEQ_ON;
-			_overlay[KEY_STUTTER-1] = OVERLAY_SEQ_OFF;
+			_overlay[KEY_STUTTER] = OVERLAY_SEQ_OFF;
 		  break;
 		case(KEY_JUMP):
 			_overlay[keyindex] = OVERLAY_SEQ_ON;
@@ -291,20 +295,20 @@ void Controls::stateNormal()
 			  _overlay[keyindex] = 0;
 			  break;
 			case(KEY_STUTTER):
-			  if(!trellisKeypad.isPressed(KEY_STUTTER_FAST))
+			  if(!trellis.isPressed(KEY_STUTTER_FAST))
 				  sequencer.setStutter(0);
 			  else{
 				  sequencer.setStutter(STUTTER_FAST_MULT);
-				  _overlay[KEY_STUTTER_FAST-1] = OVERLAY_SEQ_ON;
+				  _overlay[KEY_STUTTER_FAST] = OVERLAY_SEQ_ON;
 			  }
 			  _overlay[keyindex] = OVERLAY_SEQ_OFF;
 			  break;
 			case(KEY_STUTTER_FAST):
-			  if(!trellisKeypad.isPressed(KEY_STUTTER))
+			  if(!trellis.isPressed(KEY_STUTTER))
 				  sequencer.setStutter(0);
 			  else{
 				  sequencer.setStutter(STUTTER_MULT);
-				  _overlay[KEY_STUTTER-1] = OVERLAY_SEQ_ON;
+				  _overlay[KEY_STUTTER] = OVERLAY_SEQ_ON;
 			  }
 			  _overlay[keyindex] = OVERLAY_SEQ_OFF;
 			  break;
@@ -326,34 +330,34 @@ void Controls::stateNormal()
 	}
 
 	// tempo changing
-	if(trellisKeypad.isPressed(KEY_TEMPO_UP))
+	if(trellis.isPressed(KEY_TEMPO_UP))
 		tempoOverlay(true);
 
-	else if(trellisKeypad.isPressed(KEY_TEMPO_DOWN))
+	else if(trellis.isPressed(KEY_TEMPO_DOWN))
 		tempoOverlay(false);
 
 	// do our overlay
-	if(trellisKeypad.isPressed(KEY_SOUND)) _overlay[KEY_SOUND-1] = 0x0000FF;
-	else _overlay[KEY_SOUND-1] = OVERLAY_VOICE_OFF;
+	if(trellis.isPressed(KEY_SOUND)) _overlay[KEY_SOUND] = 0x0000FF;
+	else _overlay[KEY_SOUND] = OVERLAY_VOICE_OFF;
 
-	if(sequencer.isWriting()) _overlay[KEY_WRITE-1] = 0x0000FF;
-	else _overlay[KEY_WRITE-1] = OVERLAY_VOICE_OFF;
+	if(sequencer.isWriting()) _overlay[KEY_WRITE] = 0x0000FF;
+	else _overlay[KEY_WRITE] = OVERLAY_VOICE_OFF;
 
 	for(int i=0; i<NUM_KEYS; i++){
-		strip.setPixelColor(i, strip.getPixelColor(i) | _overlay[i]);
+		trellis.setPixelColor(i, trellis.getPixelColor(i) | _overlay[i]);
 	}
 
 	// do the sequencers overlay
 	uint32_t *overlay = sequencer.getOverlay();
 	for(int i=0; i<SEQ_NUM_STEPS; i++){
-		strip.setPixelColor(i, strip.getPixelColor(i) | *overlay++);
+		trellis.setPixelColor(i, trellis.getPixelColor(i) | *overlay++);
 	}
 
 	// do volume overlay if necessary
 	if(_volShowCount){
 		_volShowCount--;
 		for(int i=0; i<8; i++){
-			strip.setPixelColor(VOLUME_OFFSET+i, _overlayVol[i]);
+			trellis.setPixelColor(VOLUME_OFFSET+i, _overlayVol[i]);
 		}
 	}
 
@@ -361,7 +365,7 @@ void Controls::stateNormal()
 	if(_tempoShowCount){
 		_tempoShowCount--;
 		for(int i=0; i<8; i++){
-			strip.setPixelColor(TEMPO_OFFSET+i, _overlayTempo[i]);
+			trellis.setPixelColor(TEMPO_OFFSET+i, _overlayTempo[i]);
 		}
 	}
 	else _tempoHoldCount = 0;
@@ -370,34 +374,34 @@ void Controls::stateNormal()
 void Controls::recOverlay()
 {
 	for(int i=0; i<NUM_KEYS; i++){
-		strip.setPixelColor(i, strip.getPixelColor(i) | _overlay[i]);
+		trellis.setPixelColor(i, trellis.getPixelColor(i) | _overlay[i]);
 	}
 
 	// do the sequencers overlay
 	uint32_t *overlay = sequencer.getOverlay();
 	for(int i=0; i<SEQ_NUM_STEPS; i++){
-		strip.setPixelColor(i, strip.getPixelColor(i) | *overlay++);
+		trellis.setPixelColor(i, trellis.getPixelColor(i) | *overlay++);
 	}
-	strip.show();
+  trellis.show();
 }
 
 void Controls::stateRecording()
 {
-	_overlay[KEY_REC-1] = OVERLAY_REC_ON;
+	_overlay[KEY_REC] = OVERLAY_REC_ON;
 
 	for(int i=KEY_SAMPLE1; i<=KEY_SAMPLE8; i++){
-		if(trellisKeypad.isPressed(i)){
+		if(trellis.isPressed(i)){
 			// light it up
-			_overlay[i-1] = 0x0000FF;
+			_overlay[i] = 0x0000FF;
 			recOverlay();
 
 			recorder.startRecording(i-KEY_SAMPLE1);
 
-			while(trellisKeypad.isPressed(i)){
-				tick_trellis();
+			while(trellis.isPressed(i)){
+				trellis.tick();
 				recorder.continueRecording();
 			}
-			_overlay[i-1] = 0;
+			_overlay[i] = 0;
 			recorder.stopRecording();
 			recOverlay();
 
@@ -406,9 +410,9 @@ void Controls::stateRecording()
 	}
 
 	// discard all other events
-	while(trellisKeypad.available())
+	while(trellis.available())
 	{
-		trellisKeypad.read();
+		trellis.read();
 	}
 
 	recOverlay();
@@ -416,15 +420,15 @@ void Controls::stateRecording()
 
 void Controls::run()
 {
-	tick_trellis();
-	strip.clear();
+	trellis.tick();
+	trellis.fill(0);
 
-	if(!sequencer.isRunning() && trellisKeypad.isPressed(KEY_REC))
+	if(!sequencer.isRunning() && trellis.isPressed(KEY_REC))
 		stateRecording();
 	else
 		stateNormal();
 
-	strip.show();
+  trellis.show();
 }
 
 void Controls::readAccelFilter()
@@ -462,5 +466,3 @@ void Controls::readAccelBitcrush()
   bitCrushL.sampleRate(sr);
   bitCrushR.sampleRate(sr);
 }
-
-

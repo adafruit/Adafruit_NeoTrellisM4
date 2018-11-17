@@ -8,47 +8,46 @@
 #ifndef CONTROLS_H_
 #define CONTROLS_H_
 
-#include <Adafruit_NeoPixel_ZeroDMA.h>
+#include <Adafruit_NeoTrellisM4.h>
 #include <Adafruit_ADXL343.h>
 
-#define NEO_PIN 10
 #define NUM_KEYS 32
 
-#define KEY_BUILTIN1 		1
-#define KEY_BUILTIN2 		2
-#define KEY_BUILTIN3 		3
-#define KEY_BUILTIN4 		4
-#define KEY_BUILTIN5 		5
-#define KEY_BUILTIN6 		6
-#define KEY_BUILTIN7 		7
-#define KEY_BUILTIN8 		8
+#define KEY_BUILTIN1 		0
+#define KEY_BUILTIN2 		1
+#define KEY_BUILTIN3 		2
+#define KEY_BUILTIN4 		3
+#define KEY_BUILTIN5 		4
+#define KEY_BUILTIN6 		5
+#define KEY_BUILTIN7 		6
+#define KEY_BUILTIN8 		7
 
-#define KEY_SAMPLE1 		9
-#define KEY_SAMPLE2 		10
-#define KEY_SAMPLE3 		11
-#define KEY_SAMPLE4 		12
-#define KEY_SAMPLE5 		13
-#define KEY_SAMPLE6 		14
-#define KEY_SAMPLE7 		15
-#define KEY_SAMPLE8 		16
+#define KEY_SAMPLE1 		8
+#define KEY_SAMPLE2 		9
+#define KEY_SAMPLE3 		10
+#define KEY_SAMPLE4 		11
+#define KEY_SAMPLE5 		12
+#define KEY_SAMPLE6 		13
+#define KEY_SAMPLE7 		14
+#define KEY_SAMPLE8 		15
 
-#define KEY_SOUND			17
-#define KEY_STUTTER			18
-#define KEY_JUMP			19
-#define KEY_CRUSH			20
-#define KEY_SOLO_KIT		21
-#define KEY_TEMPO_UP		22
-#define KEY_VOL_UP			23
-#define KEY_REC				24
+#define KEY_SOUND			16
+#define KEY_STUTTER			17
+#define KEY_JUMP			18
+#define KEY_CRUSH			19
+#define KEY_SOLO_KIT		20
+#define KEY_TEMPO_UP		21
+#define KEY_VOL_UP			22
+#define KEY_REC				23
 
-#define KEY_WRITE			25
-#define KEY_STUTTER_FAST	26
-#define KEY_LPF				27
-#define KEY_HPF				28
-#define KEY_SOLO_REC		29
-#define KEY_TEMPO_DOWN		30
-#define KEY_VOL_DOWN		31
-#define KEY_PLAY			32
+#define KEY_WRITE			24
+#define KEY_STUTTER_FAST	25
+#define KEY_LPF				26
+#define KEY_HPF				27
+#define KEY_SOLO_REC		28
+#define KEY_TEMPO_DOWN		29
+#define KEY_VOL_DOWN		30
+#define KEY_PLAY			31
 
 #define STUTTER_MULT		2
 #define STUTTER_FAST_MULT	4
@@ -89,7 +88,7 @@
 
 class Controls {
 public:
-	Controls() : accel(12345) {
+	Controls() {
 		_volShowCount = 0;
 		_tempoShowCount = 0;
 		_tempoHoldCount = 0;
@@ -105,10 +104,7 @@ public:
 	void stateNormal();
 	void stateRecording();
 	void recOverlay();
-
-	static Adafruit_NeoPixel_ZeroDMA strip;
 private:
-	Adafruit_ADXL343 accel;
 	void readAccelBitcrush();
 	void readAccelFilter();
 
