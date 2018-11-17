@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Adafruit_Keypad.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoPixel_ZeroDMA.h>
 #include "MIDIUSB.h"
 
 #ifndef ADAFRUIT_TRELLIS_M4_EXPRESS
@@ -12,7 +13,7 @@
 
 
 
-class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel {
+class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_ZeroDMA {
 
  public:
   Adafruit_NeoTrellisM4();

@@ -53,7 +53,6 @@ AudioConnection patchCord41(mixerLeft, 0, audioOut, 0);
 AudioConnection patchCord42(mixerRight, 0, audioOut, 1);
 
 Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
-Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 
 void setup(){
   Serial.begin(115200);

@@ -18,7 +18,7 @@ static byte colPins[COLS] = {2, 3, 4, 5, 6, 7, 8, 9}; //connect to the column pi
 
 Adafruit_NeoTrellisM4::Adafruit_NeoTrellisM4(void) :
   Adafruit_Keypad(makeKeymap(trellisKeys), rowPins, colPins, ROWS, COLS),
-  Adafruit_NeoPixel(ROWS*COLS, NEO_PIN, NEO_GRB + NEO_KHZ800)
+  Adafruit_NeoPixel_ZeroDMA(ROWS*COLS, NEO_PIN, NEO_GRB)
 {
   _num_keys = ROWS * COLS;
   _rows = ROWS;
