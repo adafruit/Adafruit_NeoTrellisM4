@@ -53,7 +53,6 @@ void Adafruit_NeoTrellisM4::fill(uint32_t color) {
 void Adafruit_NeoTrellisM4::tick(void)
 {
   Adafruit_Keypad::tick();
-  
   // look for an entire column being pressed at once and if it was, clear the whole buffer
   uint8_t rcount[] = {0, 0, 0, 0, 0, 0, 0, 0};
   for(int i=0; i<(COLS*ROWS)-1; i++){
@@ -91,14 +90,16 @@ void Adafruit_NeoTrellisM4::noteOff(byte pitch, byte velocity) {
 }
 
 void Adafruit_NeoTrellisM4::pitchBend(int value) {
-  byte lowValue = value & 0x7F;
-  byte highValue = value >> 7;
+  byte lowValue =  min(value & 0x7F, 127);
+  byte highValue = min(value >> 7, 127);
   midiEventPacket_t pitchBend = {0x0E, 0xE0 | _midi_channel_usb, lowValue, highValue};
   MidiUSB.sendMIDI(pitchBend);
   _pending_midi = true;
 }
 
 void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
+  value = min(0x7F, value);
+  control = min(0x7F, control);
   midiEventPacket_t event = {0x0B, 0xB0 | _midi_channel_usb, control, value};
   MidiUSB.sendMIDI(event);
   _pending_midi = true;
