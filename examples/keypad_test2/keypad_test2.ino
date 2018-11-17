@@ -1,46 +1,43 @@
 #include "Adafruit_NeoTrellisM4.h"
-#include <Adafruit_NeoPixel.h>
 
-#define NEO_PIN 10
-#define NUM_KEYS 32
+// The NeoTrellisM4 object is a keypad and neopixel strip subclass
+// that does things like auto-update the NeoPixels and stuff!
+Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_KEYS, NEO_PIN, NEO_GRB + NEO_KHZ800);
-
-boolean lit[NUM_KEYS];
+boolean *lit_keys;
 
 void setup(){
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-  strip.setBrightness(80);
-  trellisKeypad.begin();
-  
-  Serial.begin(9600);
-  Serial.println("keypad1 test!");
+  Serial.begin(115200);
+    
+  trellis.begin();
+  trellis.setBrightness(80);
 
-  for (int i=0; i<NUM_KEYS; i++) {
-    lit[i] = false;
+  Serial.println("toggle keypad test!");
+
+  lit_keys = new boolean[trellis.num_keys()];
+  
+  for (int i=0; i<trellis.num_keys(); i++) {
+    lit_keys[i] = false;
   }
 }
   
 void loop() {
   // put your main code here, to run repeatedly:
-  tick_trellis();
+  trellis.tick();
 
-  while (trellisKeypad.available()){
-    keypadEvent e = trellisKeypad.read();
+  while (trellis.available()){
+    keypadEvent e = trellis.read();
     
     if (e.bit.EVENT == KEY_JUST_PRESSED) {
-      Serial.print((int)e.bit.KEY);
-      Serial.println(" pressed");
-      int led = e.bit.KEY-1;
-      lit[led] = !lit[led];
-      if (lit[led]) {
-        strip.setPixelColor(led, Wheel(random(255)));
+      int key = e.bit.KEY;  // shorthand for what was pressed
+      Serial.print(key); Serial.println(" pressed");
+      lit_keys[key] = !lit_keys[key];
+      if (lit_keys[key]) {
+        trellis.setPixelColor(key, Wheel(random(255)));
       } else {
-        strip.setPixelColor(led, 0);
+        trellis.setPixelColor(key, 0);
       }      
     }
-    strip.show();
   }
   
   delay(10);
@@ -52,12 +49,12 @@ void loop() {
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;
   if(WheelPos < 85) {
-    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+    return trellis.Color(255 - WheelPos * 3, 0, WheelPos * 3);
   }
   if(WheelPos < 170) {
     WheelPos -= 85;
-    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+    return trellis.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
   WheelPos -= 170;
-  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  return trellis.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
