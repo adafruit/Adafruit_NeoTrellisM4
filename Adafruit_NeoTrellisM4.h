@@ -26,6 +26,8 @@ class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_Z
 
   uint8_t num_keys(void) {return _num_keys; }
 
+  void enableUSBMIDI(boolean f);
+  void enableUARTMIDI(boolean f);
   void setUARTMIDIchannel(uint8_t c);
   void setUSBMIDIchannel(uint8_t c);
   void noteOn(byte pitch, byte velocity);
@@ -36,7 +38,7 @@ class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_Z
 
  private:
   int _num_keys, _rows, _cols;
-  boolean _pending_midi, _auto_update;
+  boolean _pending_midi, _auto_update, _midi_usb, _midi_uart;
   int _midi_channel_usb, _midi_channel_uart;
 };
 
