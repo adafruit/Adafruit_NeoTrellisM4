@@ -86,7 +86,7 @@ void Adafruit_NeoTrellisM4::enableUSBMIDI(boolean flag) {
 void Adafruit_NeoTrellisM4::enableUARTMIDI(boolean flag) {
   _midi_uart = flag;
   if (_midi_uart) {
-    Serial1.begin(312500);
+    Serial1.begin(31250);
   } else {
     Serial1.end();
   }

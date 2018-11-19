@@ -21,7 +21,7 @@ Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
 void setup(){
   Serial.begin(115200);
-  while (!Serial);
+  //while (!Serial);
   Serial.println("MIDI keypad & pitchbend!");
     
   trellis.begin();

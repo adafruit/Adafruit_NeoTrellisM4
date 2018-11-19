@@ -41,13 +41,17 @@ Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 void setup(){
   Serial.begin(115200);
   //while (!Serial);
+  Serial.println("Arp Synth ...");
 
   trellis.begin();
   trellis.setBrightness(255);
-  trellis.setUSBMIDIchannel(MIDI_CHANNEL);
+  if (MIDI_OUT) {
+    trellis.enableUSBMIDI(true);
+    trellis.setUSBMIDIchannel(MIDI_CHANNEL);
+    trellis.enableUARTMIDI(true);
+    trellis.setUARTMIDIchannel(MIDI_CHANNEL);
+  }
   
-  Serial.println("Arp Synth ...");
-
   //Set up the notes for grid
   writePitchMap();
 
