@@ -1,4 +1,4 @@
-/* Arpeggiator Synth for Adafruit Neotrellis M4
+/* Arpy - Arpeggiator Synth for Adafruit Neotrellis M4
  *  by Collin Cunningham for Adafruit Industries, inspired by Stretta's Polygome
  *  https://www.adafruit.com/product/3938
  * 
@@ -205,7 +205,7 @@ void playNoteForButton(uint8_t buttonIndex) {
     midiEventPacket_t noteOn = {0x09, 0x90 | CHANNEL, findNoteFromIndex(buttonIndex), 100};
     MidiUSB.sendMIDI(noteOn);
   }
-  else {
+  if (SYNTH_OUT) {
     noteOn(findNoteFromIndex(buttonIndex), buttonIndex);
   }
 
@@ -220,7 +220,7 @@ void stopNoteForButton(uint8_t buttonIndex) {
     midiEventPacket_t noteOff = {0x08, 0x80 | CHANNEL, findNoteFromIndex(buttonIndex), 0};
     MidiUSB.sendMIDI(noteOff);
   }
-  else {
+  if (SYNTH_OUT) {
     noteOff(findNoteFromIndex(buttonIndex), buttonIndex);
   }
 
