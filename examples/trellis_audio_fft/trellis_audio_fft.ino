@@ -1,7 +1,11 @@
-// This example code is in the public domain.
+/* This example will calculate an FFT of incoming audio through the microphone
+ *  input and display a visualizer on the trellis pixels.
+ *  The FFT bins will also be printed to the serial console and
+ *  the microphone audio will be fed through to the headphone output.
+ */
 
 #include <Audio.h>
-#include <Adafruit_NeoPixel_ZeroDMA.h>
+#include "Adafruit_NeoTrellisM4.h"
 
 #define BIN_MAX 0.1 //adjust this value to change sensitivity
 #define NEO_PIN 10
@@ -16,18 +20,20 @@ AudioAnalyzeFFT1024    myFFT;
 // Connect either the live input or synthesized sine wave
 AudioConnection patchCord1(audioInput, 0, myFFT, 0);
 AudioConnection patchCord2(audioInput, 0, audioOutput, 0);
-AudioConnection patchCord3(audioInput, 1, audioOutput, 1);
+AudioConnection patchCord3(audioInput, 0, audioOutput, 1);
 
-Adafruit_NeoPixel_ZeroDMA strip(32, NEO_PIN, NEO_GRB);
+// The NeoTrellisM4 object is a keypad and neopixel strip subclass
+// that does things like auto-update the NeoPixels and stuff!
+Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
 extern const float _mel_8_256[8][256];
 
 void setup() {
   Serial.begin(115200);
 
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-  strip.setBrightness(255);
+  trellis.begin();
+  trellis.show(); // Initialize all pixels to 'off'
+  trellis.setBrightness(255);
   
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
@@ -41,13 +47,13 @@ void setup() {
 // The colors are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
   if(WheelPos < 85) {
-   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+   return trellis.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
   } else if(WheelPos < 170) {
    WheelPos -= 85;
-   return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+   return trellis.Color(255 - WheelPos * 3, 0, WheelPos * 3);
   } else {
    WheelPos -= 170;
-   return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+   return trellis.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
   return 0;
 }
@@ -86,9 +92,9 @@ void loop() {
       for(int j=3; j>=0; j--){
         int pixnum = i + 8*j;
         if(n > (BIN_MAX/4)*(4-j))
-          strip.setPixelColor(pixnum, Wheel((255>>2)*(j+1)));
+          trellis.setPixelColor(pixnum, Wheel((255>>2)*(j+1)));
         else
-          strip.setPixelColor(pixnum, 0);
+          trellis.setPixelColor(pixnum, 0);
       }
       
       if (n >= 0.01) {
@@ -99,9 +105,8 @@ void loop() {
       }
     }
     Serial.println();
-    strip.show();
+    trellis.show();
   }
   delay(10);
 }
-
 

@@ -6,6 +6,7 @@
 
 #include <Audio.h>
 #include <Adafruit_NeoTrellisM4.h>
+#include <Adafruit_ADXL343.h>
 
 AudioSynthWaveform sine0, sine1, sine2, sine3;
 AudioSynthWaveform *waves[4] = {

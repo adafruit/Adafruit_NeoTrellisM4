@@ -3,9 +3,9 @@
 #include <Audio.h>
 #include <Adafruit_NeoTrellisM4.h>
 
-AudioSynthWaveform sine0, sine1, sine2, sine3;
+AudioSynthWaveform wave0, wave1, wave2, wave3;
 AudioSynthWaveform *waves[4] = {
-  &sine0, &sine1, &sine2, &sine3,
+  &wave0, &wave1, &wave2, &wave3,
 };
 
 short wave_type[4] = {
@@ -25,10 +25,10 @@ AudioEffectEnvelope *envs[4] = {
 
 AudioEffectDelay         delay1; 
 
-AudioConnection patchCord01(sine0, env0);
-AudioConnection patchCord02(sine1, env1);
-AudioConnection patchCord03(sine2, env2);
-AudioConnection patchCord04(sine3, env3);
+AudioConnection patchCord01(wave0, env0);
+AudioConnection patchCord02(wave1, env1);
+AudioConnection patchCord03(wave2, env2);
+AudioConnection patchCord04(wave3, env3);
 AudioConnection patchCord08(env3, delay1);
 
 AudioMixer4     mixer1;

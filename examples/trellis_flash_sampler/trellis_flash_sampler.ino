@@ -1,3 +1,7 @@
+/* This example shows how to play samples from internal flash.
+ * The first 6 keys play samples.
+ */
+
 #include <Audio.h>
 
 // WAV files converted to code by wav2sketch
@@ -9,7 +13,6 @@
 #include "AudioSampleCashregister.h" // http://www.freesound.org/people/kiddpark/sounds/201159/
 
 #include "Adafruit_NeoTrellisM4.h"
-#include <Adafruit_NeoPixel_ZeroDMA.h>
 
 #define NEO_PIN 10
 #define NUM_KEYS 32
@@ -39,15 +42,15 @@ AudioConnection c7(sound5, 0, mix2, 2);
 AudioConnection c8(mix2, 0, audioOut, 0);
 AudioConnection c9(mix2, 0, audioOut, 1);
 
-Adafruit_NeoPixel_ZeroDMA strip(NUM_KEYS, NEO_PIN, NEO_GRB);
+// The NeoTrellisM4 object is a keypad and neopixel strip subclass
+// that does things like auto-update the NeoPixels and stuff!
+Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
 void setup() {
 
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-  strip.setBrightness(255);
-
-  trellisKeypad.begin();
+  trellis.begin();
+  trellis.show(); // Initialize all pixels to 'off'
+  trellis.setBrightness(255);
 
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
@@ -70,32 +73,31 @@ void setup() {
 
 void loop() {
 
-  tick_trellis();
+  trellis.tick();
   
-  strip.clear();
-  while(trellisKeypad.available())
+  trellis.fill(0);
+  while(trellis.available())
   {
-    keypadEvent e = trellisKeypad.read();
-    int keyindex = e.bit.KEY - 1;
+    keypadEvent e = trellis.read();
     if(e.bit.EVENT == KEY_JUST_PRESSED){
-      strip.setPixelColor(keyindex, 0x0000FF);
+      trellis.setPixelColor(e.bit.KEY, 0x0000FF);
       switch(e.bit.KEY){
-        case(1):
+        case(0):
           sound0.play(AudioSampleSnare);
           break;
-        case(2):
+        case(1):
           sound1.play(AudioSampleTomtom);
           break;
-        case(3):
+        case(2):
           sound2.play(AudioSampleHihat);
           break;
-        case(4):
+        case(3):
           sound3.play(AudioSampleKick);
           break;
-        case(5):
+        case(4):
           sound4.play(AudioSampleGong);
           break;
-        case(6):
+        case(5):
           sound5.play(AudioSampleCashregister);
           break;
         default:
@@ -103,6 +105,6 @@ void loop() {
       }
     }
   }
-  strip.show();
+  trellis.show();
   delay(10);
 }
