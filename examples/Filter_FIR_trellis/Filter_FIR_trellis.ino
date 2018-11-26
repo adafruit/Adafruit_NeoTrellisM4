@@ -1,9 +1,4 @@
 /*
-c
-  - released
-b
-- Use FIR filters with fast_fft option
-
 Press key 1 on the trellis to engage the filter
 Press key 2 to change the filter type
 */
@@ -11,7 +6,6 @@ Press key 2 to change the filter type
 //#include <arm_math.h>
 #include <Audio.h>
 #include "filters.h"
-#include <Adafruit_NeoPixel_ZeroDMA.h>
 #include "Adafruit_NeoTrellisM4.h"
 
 #define BIN_MAX 0.1 //adjust this value to change sensitivity
@@ -20,10 +14,14 @@ Press key 2 to change the filter type
 
 // If this key is pressed FIR filter is turned off
 // which just passes the audio sraight through
-#define PASSTHRU_KEY 1
+#define PASSTHRU_KEY 0
 // If this key is pressedthe next FIR filter in the list
 // is switched in.
-#define FILTER_KEY 2
+#define FILTER_KEY 1
+
+// The NeoTrellisM4 object is a keypad and neopixel strip subclass
+// that does things like auto-update the NeoPixels and stuff!
+Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
 AudioInputAnalogStereo  audioInput(PIN_LINE_LEFT, PIN_LINE_RIGHT);
 AudioFilterFIR      myFilterL;
@@ -39,8 +37,6 @@ AudioConnection patchCord1(myFilterL, 0, myFFT, 0);
 // Route the output of the filters to their respective channels
 AudioConnection c3(myFilterL, 0, audioOutput, 0);
 AudioConnection c4(myFilterR, 0, audioOutput, 1);
-
-Adafruit_NeoPixel_ZeroDMA strip(NUM_KEYS, NEO_PIN, NEO_GRB);
 
 extern const float _mel_8_256[8][256];
 
@@ -62,11 +58,9 @@ void setup() {
   Serial.begin(9600);
   delay(300);
 
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-  strip.setBrightness(255);
-
-  trellisKeypad.begin();
+  trellis.begin();
+  trellis.show(); // Initialize all pixels to 'off'
+  trellis.setBrightness(255);
 
   // allocate memory for the audio library
   AudioMemory(20);
@@ -85,13 +79,13 @@ void setup() {
 // The colors are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
   if(WheelPos < 85) {
-   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+   return trellis.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
   } else if(WheelPos < 170) {
    WheelPos -= 85;
-   return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+   return trellis.Color(255 - WheelPos * 3, 0, WheelPos * 3);
   } else {
    WheelPos -= 170;
-   return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+   return trellis.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
   return 0;
 }
@@ -111,7 +105,8 @@ void loop()
   if (myFFT.available()) {
     for(i=0; i<8; i++) bins[i] = 0;
 
-    // bin the first 256 values into 8 bins
+    // bin the first 256 values into 8 bins that match human hearing scale
+    // (https://en.wikipedia.org/wiki/Mel_scale)
     // exclude the first 2 with the DC offset and below-audible freqs
     for(i=2; i<256+2; i++){
       n = myFFT.read(i);
@@ -131,19 +126,19 @@ void loop()
       for(int j=3; j>=0; j--){
         int pixnum = i + 8*j;
         if(n > (BIN_MAX/4)*(4-j))
-          strip.setPixelColor(pixnum, Wheel((255>>2)*(j+1)));
+          trellis.setPixelColor(pixnum, Wheel((255>>2)*(j+1)));
         else
-          strip.setPixelColor(pixnum, 0);
+          trellis.setPixelColor(pixnum, 0);
       }
     }
-    strip.show();
+    trellis.show();
   }
   
-  tick_trellis();
+  trellis.tick();
   
-  while(trellisKeypad.available())
+  while(trellis.available())
   {
-    keypadEvent e = trellisKeypad.read();
+    keypadEvent e = trellis.read();
     if(e.bit.KEY == PASSTHRU_KEY){
       if(e.bit.EVENT == KEY_JUST_PRESSED){
         // If the passthru button is pushed, save the current
@@ -172,5 +167,3 @@ void loop()
   }
   delay(10);
 }
-
-
