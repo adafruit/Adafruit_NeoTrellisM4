@@ -8,6 +8,8 @@
 //choose a CC number to control with x axis tilting of the board. 1 is mod wheel, for example.
 #define MIDI_XCC         1     
 #define ARPEGGIATOR_PATTERN circle_arp // see below, many shapes to choose from!
+#define HOLD_ENABLED     false  //uses a button to toggle holding the currently active arp sequence
+#define HOLD_BUTTON      7      //button used to toggle hold lock
 
 //colors//////////////////////////
 uint32_t white =   0xFFFFFF;
@@ -20,6 +22,7 @@ uint32_t yellow =  0xFFFF00;
 uint32_t off =     0x000000;
 uint32_t offColor = blue;   //color of deactivated buttons
 uint32_t onColor = magenta; //color of activated buttons
+uint32_t holdColor = white; //color of activated buttons
 
 
 //waveform//////////////////////////
