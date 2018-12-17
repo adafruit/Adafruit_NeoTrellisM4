@@ -16,7 +16,7 @@
 Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 
 #define CC_NUM 20
-#define KEYS_CC_START 7 
+#define KEYS_CC_START 7
 uint16_t cc_curr_value[CC_NUM] = {0};
 uint32_t button_colors[32] = {0};
 
@@ -25,13 +25,14 @@ Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 void setup(){
   Serial.begin(115200);
   //while (!Serial);
-    
+
   trellis.begin();
   trellis.setBrightness(80);
+  trellis.enableUSBMIDI(true);
   trellis.setUSBMIDIchannel(MIDI_CHANNEL);
 
   Serial.println("CC MIDI keypad");
-  
+
   if(!accel.begin()) {
     Serial.println("No accelerometer found");
     while(1);
@@ -59,11 +60,11 @@ void setup(){
   button_colors[30] = 0x000000;
   button_colors[31] = 0xFFFFFF;
 }
-  
+
 void loop() {
   // put your main code here, to run repeatedly:
   trellis.tick();
-  
+
   for (int key=0; key<32; key++) {
     //Serial.println(key);
     // Key is not pressed, revert color and continue
@@ -74,7 +75,7 @@ void loop() {
       continue;
     }
     Serial.print(key); Serial.println(" is pressed");
-    
+
     trellis.setPixelColor(key, 0xFFFFFF);
     if (key < 24) {
       // first 3 rows are basic CC values
@@ -105,13 +106,13 @@ void loop() {
   }
 
   // Check for accelerometer
-  //sensors_event_t event; 
+  //sensors_event_t event;
   //accel.getEvent(&event);
   /* Display the results (acceleration is measured in m/s^2) */
   //Serial.print("X: "); Serial.print(event.acceleration.x); Serial.print("  ");
   //Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
   //Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
-  
+
   trellis.sendMIDI(); // and send all MIDI messages
 
   delay(10);
@@ -120,7 +121,7 @@ void loop() {
 // floating point map
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
     float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
-  
+
     if (clamp) {
       if (outputMax < outputMin) {
         if (outVal < outputMax)  outVal = outputMax;
