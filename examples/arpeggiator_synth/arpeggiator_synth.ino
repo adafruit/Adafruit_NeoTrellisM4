@@ -1,10 +1,10 @@
 /* Arpeggiator Synth for Adafruit Neotrellis M4
-    by Collin Cunningham for Adafruit Industries, inspired by Stretta's Polygome
-    https://www.adafruit.com/product/3938
-
-    Change color, scale, pattern, bpm, and waveform variables in settings.h file!
-
-*/
+ *  by Collin Cunningham for Adafruit Industries, inspired by Stretta's Polygome
+ *  https://www.adafruit.com/product/3938
+ * 
+ *  Change color, scale, pattern, bpm, and waveform variables in settings.h file!
+ * 
+ */
 
 #include <Adafruit_ADXL343.h>
 #include <Adafruit_NeoTrellisM4.h>
@@ -19,8 +19,8 @@
 #define NULL_INDEX      255
 
 unsigned long prevReadTime = 0L; // Keypad polling timer
-uint8_t       quantDiv = 8;      // Quantization division, 2 = half note
-uint8_t       clockPulse = 0;
+//uint8_t       quantDiv = 8;      // Quantization division, 2 = half note
+//uint8_t       clockPulse = 0;
 
 //#define QUANT_PULSE (96/quantDiv)// Number of pulses per quantization division
 
@@ -28,10 +28,10 @@ boolean pressed[N_BUTTONS] = {false};        // Pressed state for each button
 uint8_t pitchMap[N_BUTTONS];
 uint8_t arpSeqIndex[N_BUTTONS] = {NULL_INDEX};   // Current place in button arpeggio sequence
 uint8_t arpButtonIndex[N_BUTTONS] = {NULL_INDEX};   // Button index being played for each actual pressed button
-bool holdActive = false;
 
 unsigned long beatInterval = 60000L / BPM; // ms/beat - should be merged w bpm in a function!
 unsigned long prevArpTime  = 0L;
+boolean holdActive = false;
 
 int last_xbend = 0;
 int last_ybend = 0;
@@ -39,7 +39,7 @@ int last_ybend = 0;
 Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 Adafruit_ADXL343 accel = Adafruit_ADXL343(123, &Wire1);
 
-void setup() {
+void setup(){
   Serial.begin(115200);
   //while (!Serial);
   Serial.println("Arp Synth ...");
@@ -52,7 +52,7 @@ void setup() {
     trellis.enableUARTMIDI(true);
     trellis.setUARTMIDIchannel(MIDI_CHANNEL);
   }
-
+  
   //Set up the notes for grid
   writePitchMap();
 
@@ -60,43 +60,44 @@ void setup() {
 
   trellis.fill(offColor);
 
-  if (!accel.begin()) {
+  if(!accel.begin()) {
     Serial.println("No accelerometer found");
-    while (1);
+    while(1);
   }
 }
 
-
+  
 void loop() {
   trellis.tick();
 
   unsigned long t = millis();
   unsigned long tDiff = t - prevReadTime;
 
-  while (trellis.available()) {
+  while (trellis.available()){
     keypadEvent e = trellis.read();
     uint8_t i = e.bit.KEY;
     if (e.bit.EVENT == KEY_JUST_PRESSED) {
-
-      if (HOLD_ENABLED && (i == HOLD_BUTTON)) {
-          holdActive = !holdActive; //toggle hold
-          if (holdActive) {
-            trellis.setPixelColor(HOLD_BUTTON, holdColor);
-          }
-          else {
-          stopAll();
-          }
+      
+      if (!HOLD_ENABLED){         //Normal mode
+        pressed[i] = true;
+      }
+      else {                       //Hold/toggle mode 
+        if (pressed[i] == true){  //if button is active, deactivate
+          pressed[i] = false;     
+          stopArp(i);
         }
-        else pressed[i] = true;
-
-    }
-
-    else if (e.bit.EVENT == KEY_JUST_RELEASED) {
-      if (!HOLD_ENABLED || (HOLD_ENABLED && !holdActive)) { //if hold is not enabled or active
-        pressed[i] = false;
-        stopArp(i);
+        else { 
+          pressed[i] = true;   //if button is inactive, activate
+        }
       }
     }
+    
+    else if (e.bit.EVENT == KEY_JUST_RELEASED) {
+        if (!HOLD_ENABLED){       //Normal mode, responds to button release
+          pressed[i] = false;
+          stopArp(i);
+        }
+      }
   }
 
   // INTERNAL CLOCK
@@ -115,7 +116,7 @@ void loop() {
   int xbend = 0;
   int ybend = 0;
   bool changed = false;
-
+  
   if (abs(event.acceleration.y) < 2.0) {  // 2.0 m/s^2
     // don't make any bend unless they've really started moving it
     ybend = 8192; // 8192 means no bend
@@ -156,17 +157,17 @@ void loop() {
   if (MIDI_OUT) {
     trellis.sendMIDI();
   }
-
+  
   prevReadTime = t;
 }
 
 
 void writePitchMap() {
   for (int i = 0; i < N_BUTTONS; i++) {
-    int octMod = i / 8 + OCTAVE;
-    pitchMap[i] = SYNTH_SCALE[i % 8] + (octMod * 12);
+    int octMod = i/8 + OCTAVE;
+    pitchMap[i] = SYNTH_SCALE[i%8] + (octMod*12);
   }
-
+  
 }
 
 void respondToPresses() {
@@ -194,6 +195,10 @@ void playArp(uint8_t buttonIndex) {
   y = buttonIndex / WIDTH;
   x = buttonIndex - (y * WIDTH);
 
+  // Reference to root button for Hold mode
+  uint8_t rootY = y;
+  uint8_t rootX = x;
+
   // Add note offsets
   x = x + ARPEGGIATOR_PATTERN[seqIndex][0];
   y = y + ARPEGGIATOR_PATTERN[seqIndex][1];
@@ -216,24 +221,21 @@ void playArp(uint8_t buttonIndex) {
   // Play new note
   playNoteForButton(seqButtonIndex);
 
-}
+  // If in Hold mode, light root button
+  if (HOLD_ENABLED) trellis.setPixelColor(indexFromXY(rootX, rootY), holdColor);
 
+}
 
 void stopArp(uint8_t button) {
-  //stop playing the note
+  // Stop playing the note
   stopNoteForButton(arpButtonIndex[button]);
 
-  //store an invalid button index in its place
+  // Store an invalid button index in its place
   arpSeqIndex[button] = NULL_INDEX;  //check for invalid
 
-}
+  // If in Hold mode, light root button
+  if (HOLD_ENABLED) trellis.setPixelColor(button, offColor);
 
-void stopAll(){
-  for (uint8_t i = 0; i < N_BUTTONS; i++){
-    stopArp[i];
-    pressed[i] = false;
-    trellis.setPixelColor(i, offColor);
-  }
 }
 
 uint8_t indexFromXY(uint8_t x, uint8_t y) {
@@ -262,8 +264,6 @@ void playNoteForButton(uint8_t buttonIndex) {
     noteOn(findNoteFromIndex(buttonIndex), buttonIndex);
   }
   trellis.setPixelColor(buttonIndex, onColor);
-
-  if (holdActive) trellis.setPixelColor(HOLD_BUTTON, holdColor);  //keep hold button lit while active
 }
 
 
@@ -279,26 +279,28 @@ void stopNoteForButton(uint8_t buttonIndex) {
   trellis.setPixelColor(buttonIndex, offColor);
 }
 
-void debugLed(bool light) {
-  if (light)
-    trellis.setPixelColor(0, blue);
-  else
-    trellis.setPixelColor(0, 0);
+void debugLed(bool light){
+  if (light) 
+     trellis.setPixelColor(0, blue);
+  else 
+     trellis.setPixelColor(0, 0);
 }
+
+
 
 // floating point map
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
-  float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+    float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
 
-  if (clamp) {
-    if (outputMax < outputMin) {
-      if (outVal < outputMax)  outVal = outputMax;
-      else if (outVal > outputMin)  outVal = outputMin;
-    } else {
-      if (outVal > outputMax) outVal = outputMax;
-      else if (outVal < outputMin)  outVal = outputMin;
+    if (clamp) {
+      if (outputMax < outputMin) {
+        if (outVal < outputMax)  outVal = outputMax;
+        else if (outVal > outputMin)  outVal = outputMin;
+      } else {
+        if (outVal > outputMax) outVal = outputMax;
+        else if (outVal < outputMin)  outVal = outputMin;
+      }
     }
-  }
-  return outVal;
+    return outVal;
 
 }
