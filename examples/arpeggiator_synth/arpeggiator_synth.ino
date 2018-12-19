@@ -19,8 +19,8 @@
 #define NULL_INDEX      255
 
 unsigned long prevReadTime = 0L; // Keypad polling timer
-uint8_t       quantDiv = 8;      // Quantization division, 2 = half note
-uint8_t       clockPulse = 0;
+//uint8_t       quantDiv = 8;      // Quantization division, 2 = half note
+//uint8_t       clockPulse = 0;
 
 //#define QUANT_PULSE (96/quantDiv)// Number of pulses per quantization division
 
@@ -31,6 +31,7 @@ uint8_t arpButtonIndex[N_BUTTONS] = {NULL_INDEX};   // Button index being played
 
 unsigned long beatInterval = 60000L / BPM; // ms/beat - should be merged w bpm in a function!
 unsigned long prevArpTime  = 0L;
+boolean holdActive = false;
 
 int last_xbend = 0;
 int last_ybend = 0;
@@ -76,11 +77,26 @@ void loop() {
     keypadEvent e = trellis.read();
     uint8_t i = e.bit.KEY;
     if (e.bit.EVENT == KEY_JUST_PRESSED) {
-      pressed[i] = true;     
+      
+      if (!HOLD_ENABLED){         //Normal mode
+        pressed[i] = true;
+      }
+      else {                       //Hold/toggle mode 
+        if (pressed[i] == true){  //if button is active, deactivate
+          pressed[i] = false;     
+          stopArp(i);
+        }
+        else { 
+          pressed[i] = true;   //if button is inactive, activate
+        }
+      }
     }
+    
     else if (e.bit.EVENT == KEY_JUST_RELEASED) {
-        pressed[i] = false;
-        stopArp(i);
+        if (!HOLD_ENABLED){       //Normal mode, responds to button release
+          pressed[i] = false;
+          stopArp(i);
+        }
       }
   }
 
@@ -179,6 +195,10 @@ void playArp(uint8_t buttonIndex) {
   y = buttonIndex / WIDTH;
   x = buttonIndex - (y * WIDTH);
 
+  // Reference to root button for Hold mode
+  uint8_t rootY = y;
+  uint8_t rootX = x;
+
   // Add note offsets
   x = x + ARPEGGIATOR_PATTERN[seqIndex][0];
   y = y + ARPEGGIATOR_PATTERN[seqIndex][1];
@@ -201,15 +221,20 @@ void playArp(uint8_t buttonIndex) {
   // Play new note
   playNoteForButton(seqButtonIndex);
 
+  // If in Hold mode, light root button
+  if (HOLD_ENABLED) trellis.setPixelColor(indexFromXY(rootX, rootY), holdColor);
+
 }
 
-
 void stopArp(uint8_t button) {
-  //stop playing the note
+  // Stop playing the note
   stopNoteForButton(arpButtonIndex[button]);
 
-  //store an invalid button index in its place
+  // Store an invalid button index in its place
   arpSeqIndex[button] = NULL_INDEX;  //check for invalid
+
+  // If in Hold mode, light root button
+  if (HOLD_ENABLED) trellis.setPixelColor(button, offColor);
 
 }
 
