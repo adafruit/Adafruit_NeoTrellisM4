@@ -1,7 +1,12 @@
-/* This example will calculate an FFT of incoming audio through the microphone
- *  input and display a visualizer on the trellis pixels.
- *  The FFT bins will also be printed to the serial console and
- *  the microphone audio will be fed through to the headphone output.
+/* This example will calculate an FFT of incoming audio through the 
+ * trellis M4 audio input circuit on the STEMMA port:
+ * 
+ *  https://learn.adafruit.com/trellis-m4-audio-visualizer-and-filter/audio-input-circuit
+ *  
+ *  Displays a visualizer on the trellis pixels.  
+ *  Uses a color table to determine what colour to make the bar.  
+ *  The top of the bar is dimmed to match the level.
+ *  The audio will be fed through to the headphone output.
  */
 
 #include <Audio.h>
