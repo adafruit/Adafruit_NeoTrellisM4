@@ -16,9 +16,9 @@
 #include <Audio.h>
 #include "Adafruit_NeoTrellisM4.h"
 
-#define BIN_MAX 0.06 // Adjust this value to change sensitivity
+#define BIN_MAX 0.1  // Adjust this value to change sensitivity
                      // 0.05 to 0.07 works well with line-level audio (eg from a mixer)
-                     // 0.1 will be good with louder sources or on the Mic port
+                     // 0.1 is good with louder sources or on the Mic port
 #define NEO_PIN 10
 
 #define COLUMNS 8   // You must provide an updated Mel table (mel_8_256.c) if you change this.
@@ -30,18 +30,28 @@
 #define PEAK_MODE_DOT 2
 
 
+// Default configuration
+
 // Choose your peak mode here
-#define PEAK_MODE PEAK_MODE_DOT
+#define PEAK_MODE PEAK_MODE_NONE
 // Whether to vary the brightness for partial values at the top of a bar
-#define VARY_BAR_TOP_BRIGHTNESS 1
+#define VARY_BAR_TOP_BRIGHTNESS 0
 // Change to 0 to disbale printing the FFT to serial, 1 to enable.
-#define PRINT_FFT 0
+#define PRINT_FFT 1
 // Pause between loops.  Good values seem to be between 5 and 15 ms.  Low values may appear to flicker too much)
-#define DELAY 5
+#define DELAY 10
+
+// Roy's preferred configuration:
+// #define PEAK_MODE PEAK_MODE_DOT
+// #define VARY_BAR_TOP_BRIGHTNESS 1
+// #define PRINT_FFT 0
+// #define DELAY 5
+// #define BIN_MAX 0.6
+
 
 // Choose an audio input
-//AudioInputAnalogStereo  audioInput(PIN_MIC, 0);
-AudioInputAnalogStereo  audioInput(PIN_LINE_LEFT, PIN_LINE_RIGHT);
+AudioInputAnalogStereo  audioInput(PIN_MIC, 0);
+//AudioInputAnalogStereo  audioInput(PIN_LINE_LEFT, PIN_LINE_RIGHT);
 
 
 // Create the Audio components.  These should be created in the
