@@ -165,6 +165,11 @@ void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
   }
 }
 
+void Adafruit_NeoTrellisM4::programChange(byte channel, byte program) {
+  midiEventPacket_t pc = {0x0C, 0xC0 | channel, program, 0};
+  MidiUSB.sendMIDI(pc);
+}
+
 void Adafruit_NeoTrellisM4::sendMIDI(void) {
   if (_midi_usb && _pending_midi) {
     MidiUSB.flush();
