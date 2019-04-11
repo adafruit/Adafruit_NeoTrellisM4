@@ -35,7 +35,8 @@ class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_Z
   void pitchBend(int value);
   void controlChange(byte control, byte value);
   void sendMIDI(void);
-
+  void programChange(byte channel, byte program);
+  
  private:
   int _num_keys, _rows, _cols;
   boolean _pending_midi, _auto_update, _midi_usb, _midi_uart;
