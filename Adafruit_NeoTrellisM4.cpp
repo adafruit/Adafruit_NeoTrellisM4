@@ -31,6 +31,12 @@ Adafruit_NeoTrellisM4::Adafruit_NeoTrellisM4(void) :
   _auto_update = true;
 }
 
+/**************************************************************************/
+/*!
+    @brief  Initialize the NeoTrellis, start the keypad scanner and turn all neopixels off.
+x*/
+/**************************************************************************/
+
 void Adafruit_NeoTrellisM4::begin(void) {
   Adafruit_Keypad::begin();
 
@@ -41,6 +47,13 @@ void Adafruit_NeoTrellisM4::begin(void) {
   Adafruit_NeoPixel_ZeroDMA::setBrightness(255);
 }
 
+/**************************************************************************/
+/*!
+    @brief  Set one neopixel with a 24-bit color (RGB in 888 format)
+    @param  pixel The pixel index from 0 (top left) to 31 (bottom right)
+    @param  color The RGB888 color
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::setPixelColor(uint32_t pixel, uint32_t color) {
   Adafruit_NeoPixel_ZeroDMA::setPixelColor(pixel, color);
   if (_auto_update) {
@@ -48,10 +61,22 @@ void Adafruit_NeoTrellisM4::setPixelColor(uint32_t pixel, uint32_t color) {
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Whether we should automatically update the neopixels whenever we set/fill the colors. Auto-update is easier to use, but is slower.
+    @param  flag true if we should auto update (show())
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::autoUpdateNeoPixels(boolean flag) {
   _auto_update = flag;
 }
 
+/**************************************************************************/
+/*!
+    @brief  Fill the neopixels with a 24-bit color (RGB in 888 format)
+    @param  color The RGB888 color
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::fill(uint32_t color) {
   for (int i=0; i<ROWS*COLS; i++) {
     Adafruit_NeoPixel_ZeroDMA::setPixelColor(i, color);
@@ -61,6 +86,12 @@ void Adafruit_NeoTrellisM4::fill(uint32_t color) {
   }
 }
 
+
+/**************************************************************************/
+/*!
+    @brief  Check the keypads to determine whather they were just pressed/released. 
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::tick(void)
 {
   Adafruit_Keypad::tick();
@@ -79,10 +110,22 @@ void Adafruit_NeoTrellisM4::tick(void)
 }
 
 
+/**************************************************************************/
+/*!
+    @brief  Whether to send MIDI messages over the USB port
+    @param  flag true for enable, false to disable
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::enableUSBMIDI(boolean flag) {
   _midi_usb = flag;
 }
 
+/**************************************************************************/
+/*!
+    @brief  Whether to send MIDI messages over the UART port
+    @param  flag true for enable, false to disable
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::enableUARTMIDI(boolean flag) {
   _midi_uart = flag;
   if (_midi_uart) {
@@ -92,15 +135,35 @@ void Adafruit_NeoTrellisM4::enableUARTMIDI(boolean flag) {
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Configure the MIDI channel to use when using USB
+    @param  c Channel number, from 0-15
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::setUSBMIDIchannel(uint8_t c) {
   _midi_channel_usb = min(15, c);  // channel can only be between 0-15;
 }
 
+
+/**************************************************************************/
+/*!
+    @brief  Configure the MIDI channel to use when using UART
+    @param  c Channel number, from 0-15
+x*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::setUARTMIDIchannel(uint8_t c) {
   _midi_channel_uart = min(15, c);  // channel can only be between 0-15;
 }
 
 
+/**************************************************************************/
+/*!
+    @brief  Send MIDI note on
+    @param  pitch 7-bit note pitch value
+    @param  velocity 7-bit note velocity
+*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::noteOn(byte pitch, byte velocity) {
   pitch = min(pitch, 0x7F);
   velocity = min(velocity, 0x7F);
@@ -117,6 +180,13 @@ void Adafruit_NeoTrellisM4::noteOn(byte pitch, byte velocity) {
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Send MIDI note off
+    @param  pitch 7-bit note pitch value
+    @param  velocity 7-bit note velocity
+*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::noteOff(byte pitch, byte velocity) {
   pitch = min(pitch, 0x7F);
   velocity = min(velocity, 0x7F);
@@ -133,6 +203,12 @@ void Adafruit_NeoTrellisM4::noteOff(byte pitch, byte velocity) {
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Send pitch bend MIDI message
+    @param  value 14-bit pitchbend value, from -8191 to 8192
+*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::pitchBend(int value) {
   byte lowValue =  min(value & 0x7F, 127);
   byte highValue = min(value >> 7, 127);
@@ -149,6 +225,13 @@ void Adafruit_NeoTrellisM4::pitchBend(int value) {
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Send control change MIDI message
+    @param    control 7-bit control name
+    @param    program 7-bit control value
+*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
   control = min(0x7F, control);
   value = min(0x7F, value);
@@ -165,11 +248,25 @@ void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
   }
 }
 
+
+/**************************************************************************/
+/*!
+    @brief  Send program change MIDI message
+    @param    channel Ranges from 0-15
+    @param    program 7-bit program value
+*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::programChange(byte channel, byte program) {
   midiEventPacket_t pc = {0x0C, 0xC0 | channel, program, 0};
   MidiUSB.sendMIDI(pc);
 }
 
+
+/**************************************************************************/
+/*!
+    @brief  Flush any pending MIDI messages for sending
+*/
+/**************************************************************************/
 void Adafruit_NeoTrellisM4::sendMIDI(void) {
   if (_midi_usb && _pending_midi) {
     MidiUSB.flush();
