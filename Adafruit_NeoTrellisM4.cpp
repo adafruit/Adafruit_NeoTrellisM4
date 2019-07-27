@@ -229,7 +229,7 @@ void Adafruit_NeoTrellisM4::pitchBend(int value) {
 /*!
     @brief  Send control change MIDI message
     @param    control 7-bit control name
-    @param    program 7-bit control value
+    @param    value 7-bit control value
 */
 /**************************************************************************/
 void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
