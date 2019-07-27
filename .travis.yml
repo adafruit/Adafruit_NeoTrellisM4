@@ -15,7 +15,7 @@ before_install:
    - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
 
 install:
-   - arduino --install-library "Adafruit ILI9341","Adafruit GFX Library"
+   - git clone --quiet https://github.com/adafruit/Audio.git $HOME/Arduino/libraries/Audio
 
 script:
    - build_m4_platforms
