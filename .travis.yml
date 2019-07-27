@@ -22,7 +22,7 @@ install:
    - arduino --install-library "Adafruit Unified Sensor"
    - arduino --install-library "Adafruit ADXL343"
    - arduino --install-library "Adafruit Zero I2S Library"
-
+   - arduino --install-library "Adafruit DMA neopixel library"
 script:
    - build_m4_platforms
 
