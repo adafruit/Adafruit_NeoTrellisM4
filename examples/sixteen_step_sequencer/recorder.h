@@ -11,9 +11,9 @@
 #include "Audio.h"
 
 #define REC_BLOCKS_PER_FILE 16
-#define REC_FILESIZE (W25Q16BV_BLOCKSIZE*REC_BLOCKS_PER_FILE)
-#define SECTOR(x) ((int)((x)/W25Q16BV_SECTORSIZE))
-#define BLOCK(x) ((int)((x)/W25Q16BV_BLOCKSIZE))
+#define REC_FILESIZE (SFLASH_BLOCK_SIZE*REC_BLOCKS_PER_FILE)
+#define SECTOR(x) ((int)((x)/SFLASH_SECTOR_SIZE))
+#define BLOCK(x) ((int)((x)/SFLASH_BLOCK_SIZE))
 
 class Recorder {
 public:

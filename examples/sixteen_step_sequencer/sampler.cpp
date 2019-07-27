@@ -8,8 +8,7 @@
 #include "sampler.h"
 #include "recorder.h"
 #include "Adafruit_SPIFlash.h"
-#include "Adafruit_QSPI_GD25Q.h"
-extern Adafruit_QSPI_GD25Q flash;
+extern Adafruit_SPIFlash flash;
 
 AudioPlayMemory    Sampler::sounds[NUM_SOUNDS] = {
 		AudioPlayMemory(), AudioPlayMemory(), AudioPlayMemory(),
@@ -134,9 +133,9 @@ void Sampler::playSound(uint8_t num)
 void AudioPlayQspiRaw::play(uint32_t addr)
 {
 	// get length from file
-	flash.readMemory(addr, (byte*)&length, sizeof(uint32_t), false);
+	flash.readBuffer(addr, (byte*)&length, sizeof(uint32_t));
 	playing = true;
-	_addr = addr + W25Q16BV_SECTORSIZE;
+	_addr = addr + SFLASH_SECTOR_SIZE;
 	Serial.println(length);
 }
 
@@ -158,7 +157,7 @@ void AudioPlayQspiRaw::update(void)
 	out = block->data;
 
 	if (playing) {
-		flash.readMemory(_addr, (uint8_t *)out, AUDIO_BLOCK_SAMPLES*2, false);
+		flash.readBuffer(_addr, (uint8_t *)out, AUDIO_BLOCK_SAMPLES*2);
 		consumed = AUDIO_BLOCK_SAMPLES*2;
 		_addr += consumed;
 	}
@@ -171,6 +170,3 @@ void AudioPlayQspiRaw::update(void)
 	transmit(block);
 	release(block);
 }
-
-
-
