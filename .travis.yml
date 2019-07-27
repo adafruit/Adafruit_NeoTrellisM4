@@ -16,6 +16,12 @@ before_install:
 
 install:
    - git clone --quiet https://github.com/adafruit/Audio.git $HOME/Arduino/libraries/Audio
+   - git clone --quiet https://github.com/adafruit/SdFat.git $HOME/Arduino/libraries/SdFat
+   - arduino --install-library "Adafruit Keypad"
+   - arduino --install-library "Adafruit NeoPixel"
+   - arduino --install-library "Adafruit Unified Sensor"
+   - arduino --install-library "Adafruit ADXL343"
+   - arduino --install-library "Adafruit Zero I2S Library"
 
 script:
    - build_m4_platforms
