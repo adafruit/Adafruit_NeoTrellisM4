@@ -26,7 +26,8 @@ class Adafruit_NeoTrellisM4 : public Adafruit_Keypad, public Adafruit_NeoPixel_Z
   void fill(uint32_t color);
 
 
-  /*!    @brief  Getter for how many keys are available on this NeoTrellis */
+  /*!    @brief  Getter for how many keys are available on this NeoTrellis 
+         @returns number of keys  */
   uint8_t num_keys(void) {return _num_keys; }
 
   void enableUSBMIDI(boolean f);
