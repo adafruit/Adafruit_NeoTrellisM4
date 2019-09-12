@@ -134,6 +134,11 @@ void AudioPlayQspiRaw::play(uint32_t addr)
 {
 	// get length from file
 	flash.readBuffer(addr, (byte*)&length, sizeof(uint32_t));
+	// sanity check length
+	if (length > REC_FILESIZE) {
+		Serial.print("Length "); Serial.println(length); Serial.print(" exceeds file size "); Serial.println(REC_FILESIZE);
+		return;
+	}
 	playing = true;
 	_addr = addr + SFLASH_SECTOR_SIZE;
 	Serial.println(length);
