@@ -31,42 +31,41 @@
 #define VOL_DEFAULT 1.0
 #define VOL_DEFAULT_REC 0.3
 
-class AudioPlayQspiRaw : public AudioStream
-{
+class AudioPlayQspiRaw : public AudioStream {
 public:
-	AudioPlayQspiRaw(void) : AudioStream(0, NULL) { begin(); }
-	void begin(void) {}
-	void play(uint32_t addr);
-	void stop(void);
-	bool isPlaying(void) { return playing; }
-	void update(void);
+  AudioPlayQspiRaw(void) : AudioStream(0, NULL) { begin(); }
+  void begin(void) {}
+  void play(uint32_t addr);
+  void stop(void);
+  bool isPlaying(void) { return playing; }
+  void update(void);
+
 private:
-	uint32_t length;
-	volatile uint32_t _addr;
-	volatile bool playing;
+  uint32_t length;
+  volatile uint32_t _addr;
+  volatile bool playing;
 };
 
 class Sampler {
 public:
-	Sampler() { _solo = SOLO_NONE; }
-	~Sampler() {}
-	void begin();
-	void playSound(uint8_t num);
-	uint8_t getSolo(){ return _solo; }
-	void setSolo(uint8_t solo);
+  Sampler() { _solo = SOLO_NONE; }
+  ~Sampler() {}
+  void begin();
+  void playSound(uint8_t num);
+  uint8_t getSolo() { return _solo; }
+  void setSolo(uint8_t solo);
 
-	static AudioPlayMemory	  sounds[NUM_SOUNDS];
-	static AudioPlayQspiRaw	  recordings[NUM_RECORDINGS];
-	static const unsigned int *soundFiles[NUM_SOUNDS];
-	static AudioMixer4        mix1;
-	static AudioMixer4        mix2;
-	static AudioMixer4        mix3;
-	static AudioMixer4        mix4;
-	static AudioMixer4        mix5;
+  static AudioPlayMemory sounds[NUM_SOUNDS];
+  static AudioPlayQspiRaw recordings[NUM_RECORDINGS];
+  static const unsigned int *soundFiles[NUM_SOUNDS];
+  static AudioMixer4 mix1;
+  static AudioMixer4 mix2;
+  static AudioMixer4 mix3;
+  static AudioMixer4 mix4;
+  static AudioMixer4 mix5;
+
 private:
-	uint8_t _solo;
+  uint8_t _solo;
 };
-
-
 
 #endif /* SAMPLER_H_ */

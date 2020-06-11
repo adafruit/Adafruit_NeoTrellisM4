@@ -6,32 +6,32 @@
  */
 
 #include "sampler.h"
-#include "recorder.h"
 #include "Adafruit_SPIFlash.h"
+#include "recorder.h"
 extern Adafruit_SPIFlash flash;
 
-AudioPlayMemory    Sampler::sounds[NUM_SOUNDS] = {
-		AudioPlayMemory(), AudioPlayMemory(), AudioPlayMemory(),
-		AudioPlayMemory(), AudioPlayMemory(), AudioPlayMemory(),
+AudioPlayMemory Sampler::sounds[NUM_SOUNDS] = {
+    AudioPlayMemory(), AudioPlayMemory(), AudioPlayMemory(),
+    AudioPlayMemory(), AudioPlayMemory(), AudioPlayMemory(),
 };
 
 AudioPlayQspiRaw Sampler::recordings[NUM_RECORDINGS] = {
-		AudioPlayQspiRaw(), AudioPlayQspiRaw(), AudioPlayQspiRaw(), AudioPlayQspiRaw(),
-		AudioPlayQspiRaw(), AudioPlayQspiRaw(), AudioPlayQspiRaw(), AudioPlayQspiRaw(),
+    AudioPlayQspiRaw(), AudioPlayQspiRaw(), AudioPlayQspiRaw(),
+    AudioPlayQspiRaw(), AudioPlayQspiRaw(), AudioPlayQspiRaw(),
+    AudioPlayQspiRaw(), AudioPlayQspiRaw(),
 };
 
 const unsigned int *Sampler::soundFiles[NUM_SOUNDS] = {
-		AudioSampleBd01, AudioSampleBd05, AudioSampleCp02, AudioSampleCr01,
-		AudioSampleHh01, AudioSampleOh03, AudioSampleRs01, AudioSampleSd01
-};
+    AudioSampleBd01, AudioSampleBd05, AudioSampleCp02, AudioSampleCr01,
+    AudioSampleHh01, AudioSampleOh03, AudioSampleRs01, AudioSampleSd01};
 
 // TODO: samples can be stereo but we're currently only using mono
 
-AudioMixer4        Sampler::mix1;
-AudioMixer4        Sampler::mix2;
-AudioMixer4        Sampler::mix3;
-AudioMixer4        Sampler::mix4;
-AudioMixer4        Sampler::mix5;
+AudioMixer4 Sampler::mix1;
+AudioMixer4 Sampler::mix2;
+AudioMixer4 Sampler::mix3;
+AudioMixer4 Sampler::mix4;
+AudioMixer4 Sampler::mix5;
 
 AudioConnection cBuiltin1(Sampler::sounds[0], 0, Sampler::mix1, 0);
 AudioConnection cBuiltin2(Sampler::sounds[1], 0, Sampler::mix1, 1);
@@ -54,124 +54,119 @@ AudioConnection cRec8(Sampler::recordings[5], 0, Sampler::mix5, 1);
 AudioConnection cRec9(Sampler::recordings[6], 0, Sampler::mix5, 2);
 AudioConnection cRec10(Sampler::recordings[7], 0, Sampler::mix5, 3);
 
-void Sampler::begin()
-{
-	// reduce the gain on mixer channels, so more than 1
-	// sound can play simultaneously without clipping
-	setSolo(SOLO_NONE);
+void Sampler::begin() {
+  // reduce the gain on mixer channels, so more than 1
+  // sound can play simultaneously without clipping
+  setSolo(SOLO_NONE);
 }
 
-void Sampler::setSolo(uint8_t solo)
-{
-	_solo = solo;
-	if(_solo == SOLO_KIT){
-		mix1.gain(0, VOL_DEFAULT);
-		mix1.gain(1, VOL_DEFAULT);
-		mix1.gain(2, VOL_DEFAULT);
-		mix1.gain(3, VOL_DEFAULT);
-		mix2.gain(1, VOL_DEFAULT);
-		mix2.gain(2, VOL_DEFAULT);
-		mix2.gain(3, VOL_DEFAULT);
-		mix3.gain(1, VOL_DEFAULT);
-		mix3.gain(2, 0.0);
-		mix3.gain(3, 0.0);
-		mix4.gain(1, 0.0);
-		mix4.gain(2, 0.0);
-		mix4.gain(3, 0.0);
-		mix5.gain(1, 0.0);
-		mix5.gain(2, 0.0);
-		mix5.gain(3, 0.0);
-	}
-	else if(_solo == SOLO_REC){
-		mix1.gain(0, 0.0);
-		mix1.gain(1, 0.0);
-		mix1.gain(2, 0.0);
-		mix1.gain(3, 0.0);
-		mix2.gain(1, 0.0);
-		mix2.gain(2, 0.0);
-		mix2.gain(3, 0.0);
-		mix3.gain(1, 0.0);
-		mix3.gain(2, VOL_DEFAULT_REC);
-		mix3.gain(3, VOL_DEFAULT_REC);
-		mix4.gain(1, VOL_DEFAULT_REC);
-		mix4.gain(2, VOL_DEFAULT_REC);
-		mix4.gain(3, VOL_DEFAULT_REC);
-		mix5.gain(1, VOL_DEFAULT_REC);
-		mix5.gain(2, VOL_DEFAULT_REC);
-		mix5.gain(3, VOL_DEFAULT_REC);
-	}
-	else{
-		mix1.gain(0, VOL_DEFAULT);
-		mix1.gain(1, VOL_DEFAULT);
-		mix1.gain(2, VOL_DEFAULT);
-		mix1.gain(3, VOL_DEFAULT);
-		mix2.gain(1, VOL_DEFAULT);
-		mix2.gain(2, VOL_DEFAULT);
-		mix2.gain(3, VOL_DEFAULT);
-		mix3.gain(1, VOL_DEFAULT);
-		mix3.gain(2, VOL_DEFAULT_REC);
-		mix3.gain(3, VOL_DEFAULT_REC);
-		mix4.gain(1, VOL_DEFAULT_REC);
-		mix4.gain(2, VOL_DEFAULT_REC);
-		mix4.gain(3, VOL_DEFAULT_REC);
-		mix5.gain(1, VOL_DEFAULT_REC);
-		mix5.gain(2, VOL_DEFAULT_REC);
-		mix5.gain(3, VOL_DEFAULT_REC);
-	}
+void Sampler::setSolo(uint8_t solo) {
+  _solo = solo;
+  if (_solo == SOLO_KIT) {
+    mix1.gain(0, VOL_DEFAULT);
+    mix1.gain(1, VOL_DEFAULT);
+    mix1.gain(2, VOL_DEFAULT);
+    mix1.gain(3, VOL_DEFAULT);
+    mix2.gain(1, VOL_DEFAULT);
+    mix2.gain(2, VOL_DEFAULT);
+    mix2.gain(3, VOL_DEFAULT);
+    mix3.gain(1, VOL_DEFAULT);
+    mix3.gain(2, 0.0);
+    mix3.gain(3, 0.0);
+    mix4.gain(1, 0.0);
+    mix4.gain(2, 0.0);
+    mix4.gain(3, 0.0);
+    mix5.gain(1, 0.0);
+    mix5.gain(2, 0.0);
+    mix5.gain(3, 0.0);
+  } else if (_solo == SOLO_REC) {
+    mix1.gain(0, 0.0);
+    mix1.gain(1, 0.0);
+    mix1.gain(2, 0.0);
+    mix1.gain(3, 0.0);
+    mix2.gain(1, 0.0);
+    mix2.gain(2, 0.0);
+    mix2.gain(3, 0.0);
+    mix3.gain(1, 0.0);
+    mix3.gain(2, VOL_DEFAULT_REC);
+    mix3.gain(3, VOL_DEFAULT_REC);
+    mix4.gain(1, VOL_DEFAULT_REC);
+    mix4.gain(2, VOL_DEFAULT_REC);
+    mix4.gain(3, VOL_DEFAULT_REC);
+    mix5.gain(1, VOL_DEFAULT_REC);
+    mix5.gain(2, VOL_DEFAULT_REC);
+    mix5.gain(3, VOL_DEFAULT_REC);
+  } else {
+    mix1.gain(0, VOL_DEFAULT);
+    mix1.gain(1, VOL_DEFAULT);
+    mix1.gain(2, VOL_DEFAULT);
+    mix1.gain(3, VOL_DEFAULT);
+    mix2.gain(1, VOL_DEFAULT);
+    mix2.gain(2, VOL_DEFAULT);
+    mix2.gain(3, VOL_DEFAULT);
+    mix3.gain(1, VOL_DEFAULT);
+    mix3.gain(2, VOL_DEFAULT_REC);
+    mix3.gain(3, VOL_DEFAULT_REC);
+    mix4.gain(1, VOL_DEFAULT_REC);
+    mix4.gain(2, VOL_DEFAULT_REC);
+    mix4.gain(3, VOL_DEFAULT_REC);
+    mix5.gain(1, VOL_DEFAULT_REC);
+    mix5.gain(2, VOL_DEFAULT_REC);
+    mix5.gain(3, VOL_DEFAULT_REC);
+  }
 }
 
-void Sampler::playSound(uint8_t num)
-{
-	if(num < NUM_SOUNDS)
-		sounds[num].play(soundFiles[num]);
-	else if(num < NUM_SOUNDS+NUM_RECORDINGS){
-		num -= NUM_SOUNDS;
-		recordings[num].play(REC_FILESIZE*num);
-	}
+void Sampler::playSound(uint8_t num) {
+  if (num < NUM_SOUNDS)
+    sounds[num].play(soundFiles[num]);
+  else if (num < NUM_SOUNDS + NUM_RECORDINGS) {
+    num -= NUM_SOUNDS;
+    recordings[num].play(REC_FILESIZE * num);
+  }
 }
 
-void AudioPlayQspiRaw::play(uint32_t addr)
-{
-	// get length from file
-	flash.readBuffer(addr, (byte*)&length, sizeof(uint32_t));
-	// sanity check length
-	if (length > REC_FILESIZE) {
-		Serial.print("Length "); Serial.println(length); Serial.print(" exceeds file size "); Serial.println(REC_FILESIZE);
-		return;
-	}
-	playing = true;
-	_addr = addr + SFLASH_SECTOR_SIZE;
-	Serial.println(length);
+void AudioPlayQspiRaw::play(uint32_t addr) {
+  // get length from file
+  flash.readBuffer(addr, (byte *)&length, sizeof(uint32_t));
+  // sanity check length
+  if (length > REC_FILESIZE) {
+    Serial.print("Length ");
+    Serial.println(length);
+    Serial.print(" exceeds file size ");
+    Serial.println(REC_FILESIZE);
+    return;
+  }
+  playing = true;
+  _addr = addr + SFLASH_SECTOR_SIZE;
+  Serial.println(length);
 }
 
-void AudioPlayQspiRaw::stop(void)
-{
-	playing = 0;
-}
+void AudioPlayQspiRaw::stop(void) { playing = 0; }
 
-void AudioPlayQspiRaw::update(void)
-{
-	audio_block_t *block;
-	int16_t *out;
-	uint32_t consumed;
+void AudioPlayQspiRaw::update(void) {
+  audio_block_t *block;
+  int16_t *out;
+  uint32_t consumed;
 
-	if (!playing) return;
-	block = allocate();
-	if (block == NULL) return;
+  if (!playing)
+    return;
+  block = allocate();
+  if (block == NULL)
+    return;
 
-	out = block->data;
+  out = block->data;
 
-	if (playing) {
-		flash.readBuffer(_addr, (uint8_t *)out, AUDIO_BLOCK_SAMPLES*2);
-		consumed = AUDIO_BLOCK_SAMPLES*2;
-		_addr += consumed;
-	}
+  if (playing) {
+    flash.readBuffer(_addr, (uint8_t *)out, AUDIO_BLOCK_SAMPLES * 2);
+    consumed = AUDIO_BLOCK_SAMPLES * 2;
+    _addr += consumed;
+  }
 
-	if (length > consumed) {
-		length -= consumed;
-	} else {
-		playing = 0;
-	}
-	transmit(block);
-	release(block);
+  if (length > consumed) {
+    length -= consumed;
+  } else {
+    playing = 0;
+  }
+  transmit(block);
+  release(block);
 }
