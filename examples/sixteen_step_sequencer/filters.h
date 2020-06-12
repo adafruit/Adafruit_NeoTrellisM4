@@ -7,13 +7,13 @@ extern short band_pass[];
 
 struct fir_filter {
   short *coeffs;
-  short num_coeffs;    // num_coeffs must be an even number, 4 or higher
+  short num_coeffs; // num_coeffs must be an even number, 4 or higher
 };
 
 extern struct fir_filter fir_list[];
 
-extern AudioFilterFIR      myFilterL;
-extern AudioFilterFIR      myFilterR;
+extern AudioFilterFIR myFilterL;
+extern AudioFilterFIR myFilterR;
 
 extern int filterActive;
 

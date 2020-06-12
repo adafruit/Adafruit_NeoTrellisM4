@@ -32,45 +32,48 @@
 
 class Sequencer {
 public:
-	Sequencer() {}
-	~Sequencer() {}
+  Sequencer() {}
+  ~Sequencer() {}
 
-	void begin();
-	static void setBPM(float bpm);
-	void run();
-	void stop();
-	bool isRunning() { return _running; }
-	int getStep() { return _step; }
-	uint32_t *getOverlay() { return _overlay; }
-	static void runStep();
-	void toggleStep(uint8_t step);
-	void toggleVoice(uint8_t step);
-	bool isWriting() { return _writing; }
-	void toggleWriting();
-	void setActiveSound(int8_t sound){
-		_activeSound = sound;
-		updateOverlay();
-	}
-	int8_t getActiveSound(){ return _activeSound; }
-	void setStutter(uint8_t mult);
-	void changeTempo(bool inc);
-	void setStep(uint8_t step);
-	void resetStep() { if(_oldStep > -1) _step = _oldStep; _oldStep = -1; }
+  void begin();
+  static void setBPM(float bpm);
+  void run();
+  void stop();
+  bool isRunning() { return _running; }
+  int getStep() { return _step; }
+  uint32_t *getOverlay() { return _overlay; }
+  static void runStep();
+  void toggleStep(uint8_t step);
+  void toggleVoice(uint8_t step);
+  bool isWriting() { return _writing; }
+  void toggleWriting();
+  void setActiveSound(int8_t sound) {
+    _activeSound = sound;
+    updateOverlay();
+  }
+  int8_t getActiveSound() { return _activeSound; }
+  void setStutter(uint8_t mult);
+  void changeTempo(bool inc);
+  void setStep(uint8_t step);
+  void resetStep() {
+    if (_oldStep > -1)
+      _step = _oldStep;
+    _oldStep = -1;
+  }
 
-	static bool _stutter, _stutterStopping;
-	static uint16_t _tempo, _stutterMult, _tempTempo, _stutterCount;
-	static int _step;
-	static int _newStep, _oldStep;
+  static bool _stutter, _stutterStopping;
+  static uint16_t _tempo, _stutterMult, _tempTempo, _stutterCount;
+  static int _step;
+  static int _newStep, _oldStep;
 
 private:
-	static void updateOverlay();
-	static int8_t _activeSound;
-	static bool _running;
-	static bool _writing;
-	static uint16_t _activeSteps;
-	static uint16_t _activeVoices[SEQ_NUM_STEPS];
-	static uint32_t _overlay[SEQ_NUM_STEPS];
+  static void updateOverlay();
+  static int8_t _activeSound;
+  static bool _running;
+  static bool _writing;
+  static uint16_t _activeSteps;
+  static uint16_t _activeVoices[SEQ_NUM_STEPS];
+  static uint32_t _overlay[SEQ_NUM_STEPS];
 };
-
 
 #endif /* SEQUENCER_H_ */
