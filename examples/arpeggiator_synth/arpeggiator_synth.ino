@@ -10,6 +10,7 @@
 #include <Adafruit_NeoTrellisM4.h>
 
 #include "settings.h"
+#include "synth.h"
 
 #define WIDTH      8
 #define HEIGHT     4
