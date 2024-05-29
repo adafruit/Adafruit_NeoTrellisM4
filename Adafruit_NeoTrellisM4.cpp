@@ -267,13 +267,19 @@ void Adafruit_NeoTrellisM4::controlChange(byte control, byte value) {
 /**************************************************************************/
 /*!
     @brief  Send program change MIDI message
-    @param    channel Ranges from 0-15
     @param    program 7-bit program value
 */
 /**************************************************************************/
-void Adafruit_NeoTrellisM4::programChange(byte channel, byte program) {
-  midiEventPacket_t pc = {0x0C, 0xC0 | channel, program, 0};
-  MidiUSB.sendMIDI(pc);
+void Adafruit_NeoTrellisM4::programChange(byte program) {
+  if (_midi_usb) {
+    midiEventPacket_t pc = {0x0C, 0xC0 | _midi_channel_usb, program, 0};
+    MidiUSB.sendMIDI(pc);
+    _pending_midi = true;
+  }
+  if (_midi_uart) {
+    Serial1.write(0xC0 | _midi_channel_uart);
+    Serial1.write(program);
+  }
 }
 
 /**************************************************************************/
