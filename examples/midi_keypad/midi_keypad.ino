@@ -54,7 +54,7 @@ void loop() {
 
     if (e.bit.EVENT == KEY_JUST_PRESSED) {
       Serial.println(" pressed\n");
-      trellis.setPixelColor(key, 0xFFFFFF);
+      trellis.setPixelColor(key, Wheel((FIRST_MIDI_NOTE+key % 12)*(255/12)) );
       trellis.noteOn(FIRST_MIDI_NOTE+key, 64);
     }
     else if (e.bit.EVENT == KEY_JUST_RELEASED) {
