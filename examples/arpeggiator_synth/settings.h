@@ -9,7 +9,7 @@
 // wheel, for example.
 #define MIDI_XCC 1
 #define ARPEGGIATOR_PATTERN circle_arp // see below, many shapes to choose from!
-#define HOLD_ENABLED                                                           \
+#define HOLD_ENABLED \
   0 // Buttons are toggled on & off instead of only on while pressed, O = off, 1
     // = on
 
@@ -34,7 +34,7 @@ uint8_t dorian_scale[] = {0, 2, 3, 5, 7, 9, 10, 12}; // dorian
 uint8_t ionian_scale[] = {0, 2, 4, 5, 7, 9, 11, 12}; // ionian
 uint8_t phrygian_scale[] = {
     0, 1, 2, 3, 5, 7, 8, 10,
-};                                                       // phrygian
+}; // phrygian
 uint8_t lydian_scale[] = {0, 2, 4, 6, 7, 9, 10, 11};     // lydian
 uint8_t mixolydian_scale[] = {0, 2, 4, 5, 7, 9, 10, 12}; // mixolydian
 uint8_t aeolian_scale[] = {0, 2, 3, 5, 7, 8, 10, 12};    // aeolian

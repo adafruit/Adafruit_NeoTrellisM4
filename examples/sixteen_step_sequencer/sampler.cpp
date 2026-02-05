@@ -6,6 +6,7 @@
  */
 
 #include "sampler.h"
+
 #include "Adafruit_SPIFlash.h"
 #include "recorder.h"
 extern Adafruit_SPIFlash flash;
@@ -21,7 +22,7 @@ AudioPlayQspiRaw Sampler::recordings[NUM_RECORDINGS] = {
     AudioPlayQspiRaw(), AudioPlayQspiRaw(),
 };
 
-const unsigned int *Sampler::soundFiles[NUM_SOUNDS] = {
+const unsigned int* Sampler::soundFiles[NUM_SOUNDS] = {
     AudioSampleBd01, AudioSampleBd05, AudioSampleCp02, AudioSampleCr01,
     AudioSampleHh01, AudioSampleOh03, AudioSampleRs01, AudioSampleSd01};
 
@@ -127,7 +128,7 @@ void Sampler::playSound(uint8_t num) {
 
 void AudioPlayQspiRaw::play(uint32_t addr) {
   // get length from file
-  flash.readBuffer(addr, (byte *)&length, sizeof(uint32_t));
+  flash.readBuffer(addr, (byte*)&length, sizeof(uint32_t));
   // sanity check length
   if (length > REC_FILESIZE) {
     Serial.print("Length ");
@@ -141,11 +142,13 @@ void AudioPlayQspiRaw::play(uint32_t addr) {
   Serial.println(length);
 }
 
-void AudioPlayQspiRaw::stop(void) { playing = 0; }
+void AudioPlayQspiRaw::stop(void) {
+  playing = 0;
+}
 
 void AudioPlayQspiRaw::update(void) {
-  audio_block_t *block;
-  int16_t *out;
+  audio_block_t* block;
+  int16_t* out;
   uint32_t consumed;
 
   if (!playing)
@@ -157,7 +160,7 @@ void AudioPlayQspiRaw::update(void) {
   out = block->data;
 
   if (playing) {
-    flash.readBuffer(_addr, (uint8_t *)out, AUDIO_BLOCK_SAMPLES * 2);
+    flash.readBuffer(_addr, (uint8_t*)out, AUDIO_BLOCK_SAMPLES * 2);
     consumed = AUDIO_BLOCK_SAMPLES * 2;
     _addr += consumed;
   }

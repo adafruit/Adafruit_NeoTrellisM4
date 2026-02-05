@@ -6,12 +6,13 @@
  */
 
 #include "sequencer.h"
+
 #include "Arduino.h"
 #include "sampler.h"
 
 #define SEC_PER_MIN 60
-#define WAIT_TC16_REGS_SYNC(x)                                                 \
-  while (x->COUNT16.SYNCBUSY.bit.ENABLE)                                       \
+#define WAIT_TC16_REGS_SYNC(x)           \
+  while (x->COUNT16.SYNCBUSY.bit.ENABLE) \
     ;
 
 int Sequencer::_step = 0;
@@ -34,7 +35,7 @@ int Sequencer::_oldStep = -1;
 
 extern Sampler sampler;
 
-static inline void resetTC(Tc *TCx) {
+static inline void resetTC(Tc* TCx) {
   // Disable TCx
   TCx->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;
   WAIT_TC16_REGS_SYNC(TCx)
@@ -161,7 +162,9 @@ void Sequencer::changeTempo(bool inc) {
   }
 }
 
-void Sequencer::setStep(uint8_t step) { _newStep = step; }
+void Sequencer::setStep(uint8_t step) {
+  _newStep = step;
+}
 
 void Sequencer::updateOverlay() {
   memset(_overlay, 0, sizeof(uint32_t) * SEQ_NUM_STEPS);

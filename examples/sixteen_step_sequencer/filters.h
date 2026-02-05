@@ -6,7 +6,7 @@ extern short low_pass[];
 extern short band_pass[];
 
 struct fir_filter {
-  short *coeffs;
+  short* coeffs;
   short num_coeffs; // num_coeffs must be an even number, 4 or higher
 };
 
