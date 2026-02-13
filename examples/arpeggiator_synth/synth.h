@@ -1,13 +1,13 @@
 #include <Audio.h>
 #include <Wire.h>
-//#include "presets.h"
+// #include "presets.h"
 
 AudioSynthWaveform sine0, sine1, sine2, sine3, sine4, sine5, sine6, sine7,
     sine8, sine9, sine10, sine11, sine12, sine13, sine14, sine15, sine16,
     sine17, sine18, sine19, sine20, sine21, sine22, sine23, sine24, sine25,
     sine26, sine27, sine28, sine29, sine30, sine31;
 
-AudioSynthWaveform *waves[32] = {
+AudioSynthWaveform* waves[32] = {
     &sine0,  &sine1,  &sine2,  &sine3,  &sine4,  &sine5,  &sine6,  &sine7,
     &sine8,  &sine9,  &sine10, &sine11, &sine12, &sine13, &sine14, &sine15,
     &sine16, &sine17, &sine18, &sine19, &sine20, &sine21, &sine22, &sine23,
@@ -28,7 +28,7 @@ float midiMap[127]; // array mapping note numbers to frequencies
 AudioEffectEnvelope env0, env1, env2, env3, env4, env5, env6, env7, env8, env9,
     env10, env11, env12, env13, env14, env15, env16, env17, env18, env19, env20,
     env21, env22, env23, env24, env25, env26, env27, env28, env29, env30, env31;
-AudioEffectEnvelope *envs[32] = {
+AudioEffectEnvelope* envs[32] = {
     &env0,  &env1,  &env2,  &env3,  &env4,  &env5,  &env6,  &env7,
     &env8,  &env9,  &env10, &env11, &env12, &env13, &env14, &env15,
     &env16, &env17, &env18, &env19, &env20, &env21, &env22, &env23,
@@ -151,7 +151,6 @@ AudioConnection patchCord76(filter, 0, audioOut, 0);
 AudioConnection patchCord77(filter, 0, audioOut, 1);
 
 void audioSetup() {
-
   AudioMemory(120);
 
   // reduce the gain on some channels, so half of the channels
@@ -183,7 +182,6 @@ void audioSetup() {
 }
 
 void noteOn(int note, int index) {
-
   // check if note is playing, prevent note retriggering
   //  bool active = playing[index];
   //  if (active) {
@@ -199,7 +197,6 @@ void noteOn(int note, int index) {
 }
 
 void freqOn(float freq, int index) {
-
   // check if note is playing, prevent note retriggering
   //  bool active = playing[index];
   //  if (active) {
@@ -215,7 +212,6 @@ void freqOn(float freq, int index) {
 }
 
 void noteOff(int note, int index) {
-
   //  playing[index] = false;
 
   envs[index]->noteOff();

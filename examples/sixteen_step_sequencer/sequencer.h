@@ -31,7 +31,7 @@
 #define SEQ_TEMPO_STEP 2
 
 class Sequencer {
-public:
+ public:
   Sequencer() {}
   ~Sequencer() {}
 
@@ -39,19 +39,29 @@ public:
   static void setBPM(float bpm);
   void run();
   void stop();
-  bool isRunning() { return _running; }
-  int getStep() { return _step; }
-  uint32_t *getOverlay() { return _overlay; }
+  bool isRunning() {
+    return _running;
+  }
+  int getStep() {
+    return _step;
+  }
+  uint32_t* getOverlay() {
+    return _overlay;
+  }
   static void runStep();
   void toggleStep(uint8_t step);
   void toggleVoice(uint8_t step);
-  bool isWriting() { return _writing; }
+  bool isWriting() {
+    return _writing;
+  }
   void toggleWriting();
   void setActiveSound(int8_t sound) {
     _activeSound = sound;
     updateOverlay();
   }
-  int8_t getActiveSound() { return _activeSound; }
+  int8_t getActiveSound() {
+    return _activeSound;
+  }
   void setStutter(uint8_t mult);
   void changeTempo(bool inc);
   void setStep(uint8_t step);
@@ -66,7 +76,7 @@ public:
   static int _step;
   static int _newStep, _oldStep;
 
-private:
+ private:
   static void updateOverlay();
   static int8_t _activeSound;
   static bool _running;

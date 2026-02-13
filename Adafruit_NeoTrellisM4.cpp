@@ -133,7 +133,9 @@ void Adafruit_NeoTrellisM4::tick(void) {
     @param  flag true for enable, false to disable
 x*/
 /**************************************************************************/
-void Adafruit_NeoTrellisM4::enableUSBMIDI(boolean flag) { _midi_usb = flag; }
+void Adafruit_NeoTrellisM4::enableUSBMIDI(boolean flag) {
+  _midi_usb = flag;
+}
 
 /**************************************************************************/
 /*!

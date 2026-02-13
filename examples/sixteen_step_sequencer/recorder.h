@@ -16,7 +16,7 @@
 #define BLOCK(x) ((int)((x) / SFLASH_BLOCK_SIZE))
 
 class Recorder {
-public:
+ public:
   Recorder() {
     _currentAddr = 0;
     _totalSize = 0;
@@ -33,7 +33,7 @@ public:
   static AudioRecordQueue queue1;
   static AudioInputAnalogStereo audioInput;
 
-private:
+ private:
   uint32_t _totalSize;
   uint32_t _currentAddr;
   uint8_t _slot;

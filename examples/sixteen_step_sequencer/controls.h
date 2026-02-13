@@ -87,7 +87,7 @@
 #define OVERLAY_PLAY_ON 0x7F7F7F
 
 class Controls {
-public:
+ public:
   Controls() {
     _volShowCount = 0;
     _tempoShowCount = 0;
@@ -105,7 +105,7 @@ public:
   void stateRecording();
   void recOverlay();
 
-private:
+ private:
   void readAccelBitcrush();
   void readAccelFilter();
 
